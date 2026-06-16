@@ -1,0 +1,1836 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8"/>
+<meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+<title>Sweet's Mobile Salon — Phoenix's Premier Mobile Hair Studio</title>
+<link rel="preconnect" href="https://fonts.googleapis.com"/>
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin/>
+<link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;0,500;0,600;1,300;1,400;1,500&family=DM+Sans:wght@300;400;500;600&display=swap" rel="stylesheet"/>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.5/gsap.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.5/ScrollTrigger.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.5/ScrollToPlugin.min.js"></script>
+
+<style>
+  :root {
+    --midnight: #0B0D17;
+    --deep: #12131A;
+    --gold: #C9A96E;
+    --gold-light: #E2C898;
+    --gold-dim: #8A6E42;
+    --blush: #E8C4BE;
+    --cream: #F5EFE6;
+    --rose: #D4897A;
+    --text-main: #F0EBE3;
+    --text-muted: #9A8F85;
+    --text-dim: #5A5450;
+  }
+
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+  html { scroll-behavior: smooth; font-size: 16px; }
+
+  body {
+    background: var(--midnight);
+    color: var(--text-main);
+    font-family: 'DM Sans', sans-serif;
+    overflow-x: hidden;
+    cursor: none;
+  }
+
+  /* Custom Cursor */
+  .cursor {
+    position: fixed;
+    width: 12px; height: 12px;
+    background: var(--gold);
+    border-radius: 50%;
+    pointer-events: none;
+    z-index: 9999;
+    transform: translate(-50%, -50%);
+    transition: width 0.2s, height 0.2s, background 0.2s;
+    mix-blend-mode: difference;
+  }
+  .cursor-ring {
+    position: fixed;
+    width: 36px; height: 36px;
+    border: 1px solid var(--gold);
+    border-radius: 50%;
+    pointer-events: none;
+    z-index: 9998;
+    transform: translate(-50%, -50%);
+    transition: width 0.3s, height 0.3s, border-color 0.3s;
+    opacity: 0.6;
+  }
+  .cursor.hover { width: 8px; height: 8px; background: var(--rose); }
+  .cursor-ring.hover { width: 52px; height: 52px; border-color: var(--rose); }
+
+  @media (hover: none) {
+    .cursor, .cursor-ring { display: none; }
+    body { cursor: auto; }
+  }
+
+  /* Nav */
+  nav {
+    position: fixed;
+    top: 0; left: 0; right: 0;
+    z-index: 100;
+    padding: 1.5rem 2.5rem;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    transition: background 0.4s, backdrop-filter 0.4s, padding 0.4s;
+  }
+  nav.scrolled {
+    background: rgba(11,13,23,0.92);
+    backdrop-filter: blur(20px);
+    padding: 1rem 2.5rem;
+    border-bottom: 1px solid rgba(201,169,110,0.12);
+  }
+  .nav-logo {
+    font-family: 'Cormorant Garamond', serif;
+    font-size: 1.35rem;
+    font-weight: 500;
+    letter-spacing: 0.08em;
+    color: var(--gold);
+    text-decoration: none;
+  }
+  .nav-links {
+    display: flex;
+    gap: 2.5rem;
+    list-style: none;
+  }
+  .nav-links a {
+    font-size: 0.8rem;
+    letter-spacing: 0.15em;
+    text-transform: uppercase;
+    color: var(--text-muted);
+    text-decoration: none;
+    transition: color 0.3s;
+  }
+  .nav-links a:hover { color: var(--gold); }
+  .nav-book {
+    font-size: 0.75rem;
+    letter-spacing: 0.12em;
+    text-transform: uppercase;
+    color: var(--midnight);
+    background: var(--gold);
+    padding: 0.6rem 1.4rem;
+    border: none;
+    cursor: pointer;
+    font-family: 'DM Sans', sans-serif;
+    font-weight: 500;
+    transition: background 0.3s, transform 0.2s;
+  }
+  .nav-book:hover { background: var(--gold-light); transform: translateY(-1px); }
+
+  .hamburger {
+    display: none;
+    flex-direction: column;
+    gap: 5px;
+    cursor: pointer;
+    background: none;
+    border: none;
+    padding: 4px;
+  }
+  .hamburger span {
+    display: block;
+    width: 22px;
+    height: 1.5px;
+    background: var(--gold);
+    transition: transform 0.3s, opacity 0.3s;
+  }
+
+  /* Mobile nav */
+  .mobile-nav {
+    display: none;
+    position: fixed;
+    inset: 0;
+    background: rgba(11,13,23,0.98);
+    z-index: 99;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    gap: 2.5rem;
+  }
+  .mobile-nav.open { display: flex; }
+  .mobile-nav a {
+    font-family: 'Cormorant Garamond', serif;
+    font-size: 2.5rem;
+    font-weight: 300;
+    color: var(--cream);
+    text-decoration: none;
+    letter-spacing: 0.05em;
+    transition: color 0.3s;
+  }
+  .mobile-nav a:hover { color: var(--gold); }
+
+  /* Hero */
+  .hero {
+    min-height: 100svh;
+    position: relative;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    overflow: hidden;
+    padding: 7rem 2.5rem 4rem;
+  }
+
+  /* Star field */
+  #starfield {
+    position: absolute;
+    inset: 0;
+    pointer-events: none;
+  }
+
+  .hero-content {
+    position: relative;
+    z-index: 2;
+    max-width: 900px;
+  }
+  .hero-eyebrow {
+    font-size: 0.72rem;
+    letter-spacing: 0.22em;
+    text-transform: uppercase;
+    color: var(--gold);
+    margin-bottom: 1.5rem;
+    display: flex;
+    align-items: center;
+    gap: 1rem;
+  }
+  .hero-eyebrow::before {
+    content: '';
+    display: block;
+    width: 40px;
+    height: 1px;
+    background: var(--gold);
+  }
+  .hero-title {
+    font-family: 'Cormorant Garamond', serif;
+    font-size: clamp(3.2rem, 8vw, 7.5rem);
+    font-weight: 300;
+    line-height: 1.02;
+    letter-spacing: -0.01em;
+    margin-bottom: 0;
+  }
+  .hero-title em {
+    font-style: italic;
+    color: var(--gold);
+  }
+  .hero-title .line { display: block; overflow: hidden; }
+  .hero-title .line-inner { display: block; }
+
+  .hero-sub {
+    margin-top: 2rem;
+    font-size: clamp(0.95rem, 2vw, 1.1rem);
+    color: var(--text-muted);
+    font-weight: 300;
+    max-width: 480px;
+    line-height: 1.75;
+  }
+  .hero-cta {
+    margin-top: 2.8rem;
+    display: flex;
+    gap: 1rem;
+    flex-wrap: wrap;
+    align-items: center;
+  }
+  .btn-primary {
+    font-size: 0.78rem;
+    letter-spacing: 0.14em;
+    text-transform: uppercase;
+    color: var(--midnight);
+    background: var(--gold);
+    padding: 1rem 2.2rem;
+    border: none;
+    cursor: pointer;
+    font-family: 'DM Sans', sans-serif;
+    font-weight: 500;
+    text-decoration: none;
+    display: inline-block;
+    transition: background 0.3s, transform 0.2s;
+  }
+  .btn-primary:hover { background: var(--gold-light); transform: translateY(-2px); }
+  .btn-ghost {
+    font-size: 0.78rem;
+    letter-spacing: 0.14em;
+    text-transform: uppercase;
+    color: var(--gold);
+    background: transparent;
+    padding: 1rem 2.2rem;
+    border: 1px solid rgba(201,169,110,0.4);
+    cursor: pointer;
+    font-family: 'DM Sans', sans-serif;
+    font-weight: 400;
+    text-decoration: none;
+    display: inline-block;
+    transition: border-color 0.3s, color 0.3s, transform 0.2s;
+  }
+  .btn-ghost:hover {
+    border-color: var(--gold);
+    transform: translateY(-2px);
+  }
+
+  /* Van SVG Scene */
+  .van-scene {
+    position: absolute;
+    right: -5%;
+    bottom: 0;
+    width: min(680px, 70vw);
+    z-index: 1;
+    pointer-events: none;
+  }
+  @media (max-width: 768px) {
+    .van-scene {
+      width: 100%;
+      right: -10%;
+      bottom: 2rem;
+      opacity: 0.35;
+    }
+  }
+
+  /* Scroll indicator */
+  .scroll-hint {
+    position: absolute;
+    bottom: 2.5rem;
+    left: 2.5rem;
+    z-index: 2;
+    display: flex;
+    align-items: center;
+    gap: 0.75rem;
+    color: var(--text-dim);
+    font-size: 0.72rem;
+    letter-spacing: 0.18em;
+    text-transform: uppercase;
+  }
+  .scroll-line {
+    width: 40px;
+    height: 1px;
+    background: var(--text-dim);
+    position: relative;
+    overflow: hidden;
+  }
+  .scroll-line::after {
+    content: '';
+    position: absolute;
+    top: 0; left: -100%;
+    width: 100%;
+    height: 100%;
+    background: var(--gold);
+    animation: scanline 2s ease-in-out infinite;
+  }
+  @keyframes scanline { 0%{left:-100%} 50%{left:100%} 100%{left:100%} }
+
+  /* Services Section */
+  .services {
+    padding: 8rem 2.5rem;
+    position: relative;
+  }
+  .section-label {
+    font-size: 0.7rem;
+    letter-spacing: 0.22em;
+    text-transform: uppercase;
+    color: var(--gold-dim);
+    margin-bottom: 3rem;
+    display: flex;
+    align-items: center;
+    gap: 1rem;
+  }
+  .section-label::before {
+    content: '';
+    display: block;
+    width: 30px;
+    height: 1px;
+    background: var(--gold-dim);
+  }
+  .services-heading {
+    font-family: 'Cormorant Garamond', serif;
+    font-size: clamp(2.2rem, 5vw, 4rem);
+    font-weight: 300;
+    line-height: 1.1;
+    margin-bottom: 4rem;
+    max-width: 600px;
+  }
+  .services-heading em { font-style: italic; color: var(--gold); }
+
+  .services-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
+    gap: 1px;
+    background: rgba(201,169,110,0.08);
+    border: 1px solid rgba(201,169,110,0.08);
+  }
+  .service-card {
+    background: var(--midnight);
+    padding: 2.5rem 2rem;
+    position: relative;
+    overflow: hidden;
+    transition: background 0.4s;
+  }
+  .service-card::before {
+    content: '';
+    position: absolute;
+    bottom: 0; left: 0;
+    width: 100%; height: 2px;
+    background: var(--gold);
+    transform: scaleX(0);
+    transform-origin: left;
+    transition: transform 0.4s;
+  }
+  .service-card:hover { background: #13151F; }
+  .service-card:hover::before { transform: scaleX(1); }
+  .service-icon {
+    width: 40px; height: 40px;
+    margin-bottom: 1.5rem;
+    opacity: 0.85;
+  }
+  .service-name {
+    font-family: 'Cormorant Garamond', serif;
+    font-size: 1.5rem;
+    font-weight: 400;
+    margin-bottom: 0.75rem;
+    letter-spacing: 0.02em;
+  }
+  .service-desc {
+    font-size: 0.88rem;
+    color: var(--text-muted);
+    line-height: 1.7;
+    font-weight: 300;
+  }
+  .service-price {
+    margin-top: 1.5rem;
+    font-size: 0.75rem;
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+    color: var(--gold-dim);
+  }
+
+  /* Experience Section */
+  .experience {
+    padding: 8rem 2.5rem;
+    background: #0E0F18;
+  }
+  .exp-inner {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 6rem;
+    align-items: center;
+    max-width: 1200px;
+    margin: 0 auto;
+  }
+  @media (max-width: 900px) {
+    .exp-inner { grid-template-columns: 1fr; gap: 3rem; }
+  }
+  .exp-visual {
+    position: relative;
+    aspect-ratio: 4/5;
+    background: #13151F;
+    overflow: hidden;
+  }
+  .exp-visual::after {
+    content: '';
+    position: absolute;
+    inset: 0;
+    background: linear-gradient(135deg, rgba(201,169,110,0.06) 0%, transparent 60%);
+    pointer-events: none;
+  }
+
+  /* Salon interior SVG */
+  .interior-svg {
+    width: 100%;
+    height: 100%;
+    position: absolute;
+    inset: 0;
+  }
+
+  .exp-steps {
+    counter-reset: step;
+  }
+  .exp-step {
+    padding: 1.8rem 0;
+    border-bottom: 1px solid rgba(255,255,255,0.05);
+    display: grid;
+    grid-template-columns: auto 1fr;
+    gap: 1.5rem;
+    align-items: start;
+  }
+  .exp-step:first-child { border-top: 1px solid rgba(255,255,255,0.05); }
+  .step-num {
+    font-family: 'Cormorant Garamond', serif;
+    font-size: 2.5rem;
+    font-weight: 300;
+    color: rgba(201,169,110,0.25);
+    line-height: 1;
+    width: 2.5rem;
+    text-align: right;
+  }
+  .step-content h3 {
+    font-family: 'Cormorant Garamond', serif;
+    font-size: 1.4rem;
+    font-weight: 400;
+    margin-bottom: 0.4rem;
+  }
+  .step-content p {
+    font-size: 0.88rem;
+    color: var(--text-muted);
+    line-height: 1.7;
+    font-weight: 300;
+  }
+
+  /* Stats Banner */
+  .stats-banner {
+    padding: 5rem 2.5rem;
+    background: var(--gold);
+  }
+  .stats-inner {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(160px, 1fr));
+    gap: 3rem;
+    max-width: 1000px;
+    margin: 0 auto;
+    text-align: center;
+  }
+  .stat-num {
+    font-family: 'Cormorant Garamond', serif;
+    font-size: clamp(2.5rem, 5vw, 4rem);
+    font-weight: 300;
+    color: var(--midnight);
+    line-height: 1;
+  }
+  .stat-label {
+    font-size: 0.75rem;
+    letter-spacing: 0.14em;
+    text-transform: uppercase;
+    color: rgba(11,13,23,0.6);
+    margin-top: 0.5rem;
+    font-weight: 400;
+  }
+
+  /* Testimonials */
+  .testimonials {
+    padding: 8rem 2.5rem;
+    position: relative;
+    overflow: hidden;
+  }
+  .testi-track {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 1.5rem;
+    margin-top: 4rem;
+  }
+  @media (max-width: 900px) {
+    .testi-track { grid-template-columns: 1fr; }
+  }
+  .testi-card {
+    background: #0E0F18;
+    border: 1px solid rgba(201,169,110,0.1);
+    padding: 2.2rem;
+    position: relative;
+  }
+  .testi-quote {
+    font-family: 'Cormorant Garamond', serif;
+    font-size: 1.15rem;
+    font-weight: 300;
+    font-style: italic;
+    line-height: 1.65;
+    color: var(--cream);
+    margin-bottom: 1.5rem;
+  }
+  .testi-mark {
+    font-family: 'Cormorant Garamond', serif;
+    font-size: 4rem;
+    color: rgba(201,169,110,0.15);
+    line-height: 0.6;
+    position: absolute;
+    top: 1.5rem; right: 2rem;
+  }
+  .testi-author {
+    display: flex;
+    align-items: center;
+    gap: 0.75rem;
+  }
+  .testi-avatar {
+    width: 38px; height: 38px;
+    border-radius: 50%;
+    background: rgba(201,169,110,0.15);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-family: 'Cormorant Garamond', serif;
+    font-size: 1rem;
+    font-style: italic;
+    color: var(--gold);
+  }
+  .testi-name {
+    font-size: 0.88rem;
+    font-weight: 500;
+    color: var(--text-main);
+  }
+  .testi-area {
+    font-size: 0.78rem;
+    color: var(--text-dim);
+    margin-top: 0.1rem;
+  }
+  .stars {
+    color: var(--gold);
+    font-size: 0.75rem;
+    letter-spacing: 0.1em;
+    margin-bottom: 1rem;
+  }
+
+  /* Phoenix Map Area */
+  .coverage {
+    padding: 8rem 2.5rem;
+    background: #0E0F18;
+  }
+  .coverage-inner {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 5rem;
+    align-items: center;
+    max-width: 1200px;
+    margin: 0 auto;
+  }
+  @media (max-width: 900px) {
+    .coverage-inner { grid-template-columns: 1fr; gap: 3rem; }
+  }
+  .area-list {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 0.6rem 2rem;
+    margin-top: 2.5rem;
+  }
+  .area-item {
+    font-size: 0.9rem;
+    color: var(--text-muted);
+    padding: 0.35rem 0;
+    border-bottom: 1px solid rgba(255,255,255,0.04);
+    display: flex;
+    align-items: center;
+    gap: 0.6rem;
+    font-weight: 300;
+    transition: color 0.3s;
+  }
+  .area-item::before {
+    content: '';
+    width: 5px; height: 5px;
+    background: var(--gold);
+    border-radius: 50%;
+    flex-shrink: 0;
+    opacity: 0.5;
+  }
+  .area-item:hover { color: var(--gold); }
+
+  /* Booking Section */
+  .booking {
+    padding: 8rem 2.5rem;
+    position: relative;
+    overflow: hidden;
+  }
+  .booking::before {
+    content: '';
+    position: absolute;
+    inset: 0;
+    background: radial-gradient(ellipse at 50% 0%, rgba(201,169,110,0.06) 0%, transparent 70%);
+    pointer-events: none;
+  }
+  .booking-inner {
+    max-width: 700px;
+    margin: 0 auto;
+    text-align: center;
+  }
+  .booking h2 {
+    font-family: 'Cormorant Garamond', serif;
+    font-size: clamp(2.5rem, 5vw, 4.5rem);
+    font-weight: 300;
+    line-height: 1.1;
+    margin-bottom: 1.5rem;
+  }
+  .booking h2 em { font-style: italic; color: var(--gold); }
+  .booking-sub {
+    font-size: 1rem;
+    color: var(--text-muted);
+    font-weight: 300;
+    line-height: 1.7;
+    margin-bottom: 3rem;
+  }
+  .booking-form {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 1rem;
+    text-align: left;
+    margin-bottom: 1rem;
+  }
+  @media (max-width: 600px) {
+    .booking-form { grid-template-columns: 1fr; }
+  }
+  .form-group {
+    display: flex;
+    flex-direction: column;
+    gap: 0.4rem;
+  }
+  .form-group.full { grid-column: 1 / -1; }
+  .form-label {
+    font-size: 0.7rem;
+    letter-spacing: 0.15em;
+    text-transform: uppercase;
+    color: var(--text-dim);
+  }
+  .form-input, .form-select {
+    background: rgba(255,255,255,0.04);
+    border: 1px solid rgba(255,255,255,0.1);
+    color: var(--text-main);
+    padding: 0.85rem 1rem;
+    font-family: 'DM Sans', sans-serif;
+    font-size: 0.9rem;
+    font-weight: 300;
+    outline: none;
+    transition: border-color 0.3s;
+    width: 100%;
+    appearance: none;
+  }
+  .form-input::placeholder { color: var(--text-dim); }
+  .form-input:focus, .form-select:focus { border-color: rgba(201,169,110,0.5); }
+  .form-select { cursor: pointer; }
+  .form-select option { background: var(--deep); }
+
+  .phone-display {
+    margin-top: 3.5rem;
+    padding-top: 3.5rem;
+    border-top: 1px solid rgba(201,169,110,0.1);
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 0.5rem;
+  }
+  .phone-label {
+    font-size: 0.7rem;
+    letter-spacing: 0.2em;
+    text-transform: uppercase;
+    color: var(--text-dim);
+  }
+  .phone-num {
+    font-family: 'Cormorant Garamond', serif;
+    font-size: 2.2rem;
+    font-weight: 300;
+    color: var(--gold);
+    letter-spacing: 0.04em;
+  }
+
+  /* Footer */
+  footer {
+    background: var(--deep);
+    padding: 4rem 2.5rem 2rem;
+    border-top: 1px solid rgba(201,169,110,0.08);
+  }
+  .footer-inner {
+    display: grid;
+    grid-template-columns: 2fr 1fr 1fr;
+    gap: 4rem;
+    max-width: 1200px;
+    margin: 0 auto;
+    padding-bottom: 3rem;
+    border-bottom: 1px solid rgba(255,255,255,0.05);
+  }
+  @media (max-width: 768px) {
+    .footer-inner { grid-template-columns: 1fr; gap: 2.5rem; }
+  }
+  .footer-brand {
+    font-family: 'Cormorant Garamond', serif;
+    font-size: 1.4rem;
+    font-weight: 500;
+    color: var(--gold);
+    margin-bottom: 1rem;
+    letter-spacing: 0.08em;
+  }
+  .footer-tagline {
+    font-size: 0.88rem;
+    color: var(--text-dim);
+    line-height: 1.7;
+    font-weight: 300;
+    max-width: 280px;
+  }
+  .footer-col h4 {
+    font-size: 0.7rem;
+    letter-spacing: 0.18em;
+    text-transform: uppercase;
+    color: var(--text-dim);
+    margin-bottom: 1.2rem;
+  }
+  .footer-col ul { list-style: none; }
+  .footer-col ul li { margin-bottom: 0.7rem; }
+  .footer-col ul a {
+    font-size: 0.88rem;
+    color: var(--text-muted);
+    text-decoration: none;
+    font-weight: 300;
+    transition: color 0.3s;
+  }
+  .footer-col ul a:hover { color: var(--gold); }
+  .footer-bottom {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding-top: 2rem;
+    max-width: 1200px;
+    margin: 0 auto;
+    flex-wrap: wrap;
+    gap: 1rem;
+  }
+  .footer-copy {
+    font-size: 0.78rem;
+    color: var(--text-dim);
+    font-weight: 300;
+  }
+  .social-links {
+    display: flex;
+    gap: 1.2rem;
+  }
+  .social-link {
+    width: 32px; height: 32px;
+    border: 1px solid rgba(201,169,110,0.2);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: var(--text-dim);
+    text-decoration: none;
+    font-size: 0.75rem;
+    transition: border-color 0.3s, color 0.3s;
+  }
+  .social-link:hover { border-color: var(--gold); color: var(--gold); }
+
+  /* Gold shimmer line */
+  .shimmer-line {
+    height: 1px;
+    background: linear-gradient(90deg, transparent 0%, var(--gold) 50%, transparent 100%);
+    opacity: 0.3;
+    margin: 0;
+  }
+
+  /* Floating particles */
+  .particles {
+    position: absolute;
+    inset: 0;
+    pointer-events: none;
+    overflow: hidden;
+  }
+  .particle {
+    position: absolute;
+    border-radius: 50%;
+    background: var(--gold);
+    opacity: 0;
+    animation: float-up var(--dur, 8s) ease-in var(--delay, 0s) infinite;
+  }
+  @keyframes float-up {
+    0%   { opacity: 0; transform: translateY(0) scale(0.5); }
+    10%  { opacity: 0.6; }
+    90%  { opacity: 0.1; }
+    100% { opacity: 0; transform: translateY(-100px) scale(0.2); }
+  }
+
+  /* Reveal animation classes */
+  .reveal { opacity: 0; transform: translateY(30px); }
+  .reveal-left { opacity: 0; transform: translateX(-40px); }
+  .reveal-right { opacity: 0; transform: translateX(40px); }
+
+  /* Progress bar */
+  .progress-bar {
+    position: fixed;
+    top: 0; left: 0;
+    height: 2px;
+    background: var(--gold);
+    z-index: 200;
+    transform-origin: left;
+    transform: scaleX(0);
+  }
+
+  /* Mobile nav toggle state */
+  @media (max-width: 768px) {
+    .nav-links, .nav-book { display: none; }
+    .hamburger { display: flex; }
+  }
+
+  /* Highlight text */
+  .gold-text { color: var(--gold); }
+  .italic-serif { font-family: 'Cormorant Garamond', serif; font-style: italic; }
+</style>
+</head>
+
+<body>
+
+<div class="cursor" id="cursor"></div>
+<div class="cursor-ring" id="cursor-ring"></div>
+<div class="progress-bar" id="progress-bar"></div>
+
+<!-- Navigation -->
+<nav id="nav">
+  <a href="#" class="nav-logo">Sweet's Mobile Salon</a>
+  <ul class="nav-links">
+    <li><a href="#services">Services</a></li>
+    <li><a href="#experience">Experience</a></li>
+    <li><a href="#coverage">Coverage</a></li>
+    <li><a href="#booking">Book Now</a></li>
+  </ul>
+  <button class="nav-book" onclick="document.getElementById('booking').scrollIntoView({behavior:'smooth'})">Book Appointment</button>
+  <button class="hamburger" id="hamburger" aria-label="Open menu">
+    <span></span><span></span><span></span>
+  </button>
+</nav>
+
+<!-- Mobile Nav -->
+<div class="mobile-nav" id="mobile-nav">
+  <a href="#services" onclick="closeMobileNav()">Services</a>
+  <a href="#experience" onclick="closeMobileNav()">Experience</a>
+  <a href="#coverage" onclick="closeMobileNav()">Coverage</a>
+  <a href="#booking" onclick="closeMobileNav()">Book Now</a>
+</div>
+
+<!-- Hero -->
+<section class="hero" id="hero">
+  <canvas id="starfield"></canvas>
+
+  <div class="hero-content">
+    <div class="hero-eyebrow">Phoenix's Premier Mobile Hair Studio</div>
+    <h1 class="hero-title">
+      <span class="line"><span class="line-inner">Your salon,</span></span>
+      <span class="line"><span class="line-inner"><em>brought</em> to</span></span>
+      <span class="line"><span class="line-inner">your door.</span></span>
+    </h1>
+    <p class="hero-sub">Full-service hair care — cuts, color, perms, styling, and more — delivered to your home in a beautifully appointed mobile studio.</p>
+    <div class="hero-cta">
+      <a href="#booking" class="btn-primary">Book Your Visit</a>
+      <a href="#services" class="btn-ghost">Explore Services</a>
+    </div>
+  </div>
+
+  <!-- Van SVG Illustration -->
+  <div class="van-scene" id="van-scene">
+    <svg viewBox="0 0 680 440" fill="none" xmlns="http://www.w3.org/2000/svg">
+      <defs>
+        <linearGradient id="vbody" x1="0" y1="0" x2="0" y2="1">
+          <stop offset="0%" stop-color="#1E2235"/>
+          <stop offset="100%" stop-color="#0D0F1A"/>
+        </linearGradient>
+        <linearGradient id="vgold" x1="0" y1="0" x2="1" y2="0">
+          <stop offset="0%" stop-color="#8A6E42"/>
+          <stop offset="50%" stop-color="#C9A96E"/>
+          <stop offset="100%" stop-color="#8A6E42"/>
+        </linearGradient>
+        <linearGradient id="vwindow" x1="0" y1="0" x2="0" y2="1">
+          <stop offset="0%" stop-color="#2A3050"/>
+          <stop offset="100%" stop-color="#1A1F38"/>
+        </linearGradient>
+        <linearGradient id="tire-g" x1="0" y1="0" x2="0" y2="1">
+          <stop offset="0%" stop-color="#2A2A2A"/>
+          <stop offset="100%" stop-color="#111"/>
+        </linearGradient>
+        <linearGradient id="road-g" x1="0" y1="0" x2="0" y2="1">
+          <stop offset="0%" stop-color="#1A1C28"/>
+          <stop offset="100%" stop-color="#0B0D17"/>
+        </linearGradient>
+        <radialGradient id="glow1" cx="50%" cy="50%" r="50%">
+          <stop offset="0%" stop-color="#C9A96E" stop-opacity="0.15"/>
+          <stop offset="100%" stop-color="#C9A96E" stop-opacity="0"/>
+        </radialGradient>
+      </defs>
+
+      <!-- Road -->
+      <rect x="0" y="360" width="680" height="80" fill="url(#road-g)"/>
+      <!-- Road lines -->
+      <rect x="0" y="398" width="680" height="2" fill="rgba(255,255,255,0.04)"/>
+      <rect class="road-dash" x="40" y="396" width="60" height="4" rx="2" fill="rgba(201,169,110,0.15)"/>
+      <rect class="road-dash" x="180" y="396" width="60" height="4" rx="2" fill="rgba(201,169,110,0.15)"/>
+      <rect class="road-dash" x="320" y="396" width="60" height="4" rx="2" fill="rgba(201,169,110,0.15)"/>
+      <rect class="road-dash" x="460" y="396" width="60" height="4" rx="2" fill="rgba(201,169,110,0.15)"/>
+      <rect class="road-dash" x="600" y="396" width="60" height="4" rx="2" fill="rgba(201,169,110,0.15)"/>
+
+      <!-- Van glow -->
+      <ellipse cx="310" cy="400" rx="280" ry="40" fill="url(#glow1)"/>
+
+      <!-- === VAN BODY === -->
+      <!-- Main body -->
+      <rect x="80" y="220" width="480" height="145" rx="12" fill="url(#vbody)"/>
+      <!-- Cab section -->
+      <rect x="80" y="175" width="190" height="100" rx="8" fill="url(#vbody)"/>
+
+      <!-- Gold accent stripe -->
+      <rect x="80" y="305" width="480" height="4" fill="url(#vgold)"/>
+      <rect x="80" y="314" width="480" height="1" fill="rgba(201,169,110,0.3)"/>
+
+      <!-- Sweet's Salon lettering band -->
+      <rect x="260" y="230" width="270" height="65" rx="4" fill="rgba(201,169,110,0.06)" stroke="rgba(201,169,110,0.15)" stroke-width="0.5"/>
+      <text x="395" y="264" text-anchor="middle" font-family="'Cormorant Garamond', serif" font-style="italic" font-size="20" font-weight="300" fill="#C9A96E" letter-spacing="2">Sweet's Mobile Salon</text>
+      <text x="395" y="284" text-anchor="middle" font-family="'DM Sans', sans-serif" font-size="9" font-weight="300" fill="rgba(201,169,110,0.5)" letter-spacing="4">PHOENIX, AZ</text>
+
+      <!-- Floral / scissors decorative icon -->
+      <g transform="translate(285, 248)" opacity="0.5">
+        <circle cx="12" cy="12" r="8" stroke="#C9A96E" stroke-width="0.5" fill="none"/>
+        <path d="M8 8L16 16M16 8L8 16" stroke="#C9A96E" stroke-width="1" stroke-linecap="round"/>
+        <circle cx="8" cy="8" r="2" fill="#C9A96E" opacity="0.5"/>
+        <circle cx="16" cy="16" r="2" fill="#C9A96E" opacity="0.5"/>
+      </g>
+
+      <!-- Driver window -->
+      <rect x="92" y="185" width="75" height="62" rx="6" fill="url(#vwindow)" stroke="rgba(201,169,110,0.2)" stroke-width="0.5"/>
+      <!-- Windshield -->
+      <rect x="175" y="182" width="82" height="72" rx="4" fill="url(#vwindow)" stroke="rgba(201,169,110,0.2)" stroke-width="0.5"/>
+      <!-- Window glare -->
+      <path d="M100 192 L130 185" stroke="rgba(255,255,255,0.12)" stroke-width="2" stroke-linecap="round"/>
+      <path d="M182 188 L218 183" stroke="rgba(255,255,255,0.1)" stroke-width="1.5" stroke-linecap="round"/>
+
+      <!-- Side windows (salon) -->
+      <rect x="285" y="232" width="55" height="42" rx="4" fill="url(#vwindow)" stroke="rgba(201,169,110,0.2)" stroke-width="0.5"/>
+      <rect x="350" y="232" width="55" height="42" rx="4" fill="url(#vwindow)" stroke="rgba(201,169,110,0.2)" stroke-width="0.5"/>
+      <rect x="415" y="232" width="55" height="42" rx="4" fill="url(#vwindow)" stroke="rgba(201,169,110,0.2)" stroke-width="0.5"/>
+      <rect x="480" y="232" width="55" height="42" rx="4" fill="url(#vwindow)" stroke="rgba(201,169,110,0.2)" stroke-width="0.5"/>
+
+      <!-- Side door -->
+      <rect x="380" y="220" width="120" height="145" rx="2" fill="none" stroke="rgba(201,169,110,0.15)" stroke-width="0.5" stroke-dasharray="2,2"/>
+      <circle cx="378" cy="295" r="4" fill="rgba(201,169,110,0.3)"/>
+
+      <!-- Rear light bar -->
+      <rect x="548" y="230" width="10" height="30" rx="2" fill="rgba(220,80,60,0.4)"/>
+      <rect x="548" y="265" width="10" height="15" rx="1" fill="rgba(255,180,60,0.3)"/>
+
+      <!-- Headlights -->
+      <rect x="84" y="230" width="14" height="22" rx="2" fill="rgba(255,220,120,0.5)"/>
+      <ellipse cx="84" cy="241" rx="30" ry="12" fill="rgba(255,220,120,0.04)"/>
+
+      <!-- Front bumper -->
+      <rect x="82" y="340" width="100" height="12" rx="3" fill="#1A1C25"/>
+
+      <!-- Wheels -->
+      <!-- Front wheel -->
+      <circle cx="170" cy="362" r="38" fill="url(#tire-g)"/>
+      <circle cx="170" cy="362" r="28" fill="#1A1A1A"/>
+      <circle cx="170" cy="362" r="16" fill="#222" stroke="rgba(201,169,110,0.2)" stroke-width="1"/>
+      <circle cx="170" cy="362" r="4" fill="rgba(201,169,110,0.4)"/>
+      <line x1="170" y1="346" x2="170" y2="378" stroke="rgba(201,169,110,0.15)" stroke-width="1"/>
+      <line x1="154" y1="362" x2="186" y2="362" stroke="rgba(201,169,110,0.15)" stroke-width="1"/>
+      <!-- Rear wheel -->
+      <circle cx="440" cy="362" r="38" fill="url(#tire-g)"/>
+      <circle cx="440" cy="362" r="28" fill="#1A1A1A"/>
+      <circle cx="440" cy="362" r="16" fill="#222" stroke="rgba(201,169,110,0.2)" stroke-width="1"/>
+      <circle cx="440" cy="362" r="4" fill="rgba(201,169,110,0.4)"/>
+      <line x1="440" y1="346" x2="440" y2="378" stroke="rgba(201,169,110,0.15)" stroke-width="1"/>
+      <line x1="424" y1="362" x2="456" y2="362" stroke="rgba(201,169,110,0.15)" stroke-width="1"/>
+
+      <!-- Wheel shadow -->
+      <ellipse cx="170" cy="400" rx="40" ry="6" fill="rgba(0,0,0,0.4)"/>
+      <ellipse cx="440" cy="400" rx="40" ry="6" fill="rgba(0,0,0,0.4)"/>
+
+      <!-- Roof rack / equipment hints -->
+      <rect x="100" y="213" width="460" height="8" rx="2" fill="#1A1C25" stroke="rgba(201,169,110,0.1)" stroke-width="0.5"/>
+      <rect x="120" y="208" width="8" height="8" rx="1" fill="#16182A"/>
+      <rect x="160" y="208" width="8" height="8" rx="1" fill="#16182A"/>
+      <rect x="200" y="208" width="8" height="8" rx="1" fill="#16182A"/>
+    </svg>
+  </div>
+
+  <div class="scroll-hint">
+    <span class="scroll-line"></span>
+    <span>Scroll to explore</span>
+  </div>
+</section>
+
+<div class="shimmer-line"></div>
+
+<!-- Services -->
+<section class="services" id="services">
+  <div class="particles" aria-hidden="true">
+    <div class="particle" style="left:15%;top:20%;width:3px;height:3px;--dur:7s;--delay:0s"></div>
+    <div class="particle" style="left:45%;top:60%;width:2px;height:2px;--dur:9s;--delay:1.5s"></div>
+    <div class="particle" style="left:75%;top:30%;width:3px;height:3px;--dur:6s;--delay:3s"></div>
+    <div class="particle" style="left:90%;top:70%;width:2px;height:2px;--dur:11s;--delay:0.5s"></div>
+  </div>
+
+  <div class="section-label reveal">Our Services</div>
+  <h2 class="services-heading reveal">
+    A full salon experience,<br><em>wherever you are.</em>
+  </h2>
+
+  <div class="services-grid">
+    <div class="service-card reveal">
+      <svg class="service-icon" viewBox="0 0 40 40" fill="none">
+        <path d="M20 8C14.48 8 10 12.48 10 18s4.48 10 10 10 10-4.48 10-10S25.52 8 20 8z" stroke="#C9A96E" stroke-width="1" opacity="0.6"/>
+        <path d="M20 14v6l4 2" stroke="#C9A96E" stroke-width="1.2" stroke-linecap="round"/>
+        <path d="M14 6L10 2M26 6L30 2" stroke="#C9A96E" stroke-width="1" stroke-linecap="round" opacity="0.5"/>
+        <circle cx="20" cy="18" r="2" fill="#C9A96E" opacity="0.4"/>
+      </svg>
+      <h3 class="service-name">Haircuts & Styling</h3>
+      <p class="service-desc">Precision cuts for every hair type and texture, from classic bobs to layered lobs, textured crops, and beyond. Blowouts and heat styling included.</p>
+      <div class="service-price">Starting at $65</div>
+    </div>
+
+    <div class="service-card reveal">
+      <svg class="service-icon" viewBox="0 0 40 40" fill="none">
+        <path d="M8 32L20 8L32 32" stroke="#C9A96E" stroke-width="1" stroke-linecap="round" stroke-linejoin="round" opacity="0.6"/>
+        <path d="M12 24h16" stroke="#C9A96E" stroke-width="1" stroke-linecap="round"/>
+        <circle cx="20" cy="16" r="3" fill="#C9A96E" opacity="0.35"/>
+        <path d="M6 36h28" stroke="#C9A96E" stroke-width="1" stroke-linecap="round" opacity="0.4"/>
+      </svg>
+      <h3 class="service-name">Color & Highlights</h3>
+      <p class="service-desc">Full color, balayage, ombré, babylights, and dimensional highlights. Expert color correction and glossing treatments to make your color sing.</p>
+      <div class="service-price">Starting at $120</div>
+    </div>
+
+    <div class="service-card reveal">
+      <svg class="service-icon" viewBox="0 0 40 40" fill="none">
+        <path d="M12 10C12 10 14 14 20 14C26 14 28 10 28 10" stroke="#C9A96E" stroke-width="1" stroke-linecap="round" opacity="0.6"/>
+        <path d="M10 20C10 20 13 28 20 28C27 28 30 20 30 20" stroke="#C9A96E" stroke-width="1" stroke-linecap="round" opacity="0.6"/>
+        <circle cx="20" cy="19" r="5" stroke="#C9A96E" stroke-width="1" opacity="0.4"/>
+        <path d="M16 8 Q20 4 24 8" stroke="#C9A96E" stroke-width="1" stroke-linecap="round" fill="none" opacity="0.5"/>
+      </svg>
+      <h3 class="service-name">Perms & Waves</h3>
+      <p class="service-desc">Body waves, beach waves, spiral curls, and traditional perms. Using professional formulas gentle enough for color-treated hair.</p>
+      <div class="service-price">Starting at $150</div>
+    </div>
+
+    <div class="service-card reveal">
+      <svg class="service-icon" viewBox="0 0 40 40" fill="none">
+        <path d="M20 6L24 14L33 15.5L26.5 22L28 31L20 27L12 31L13.5 22L7 15.5L16 14Z" stroke="#C9A96E" stroke-width="1" stroke-linejoin="round" opacity="0.6" fill="rgba(201,169,110,0.05)"/>
+        <circle cx="20" cy="20" r="3" fill="#C9A96E" opacity="0.3"/>
+      </svg>
+      <h3 class="service-name">Treatments & Glosses</h3>
+      <p class="service-desc">Keratin smoothing, deep conditioning masks, olaplex bond repair, scalp treatments, and clear or tinted glosses to boost shine and health.</p>
+      <div class="service-price">Starting at $80</div>
+    </div>
+
+    <div class="service-card reveal">
+      <svg class="service-icon" viewBox="0 0 40 40" fill="none">
+        <circle cx="20" cy="16" r="8" stroke="#C9A96E" stroke-width="1" opacity="0.5"/>
+        <path d="M14 28C14 28 15 34 20 34C25 34 26 28 26 28" stroke="#C9A96E" stroke-width="1" stroke-linecap="round" opacity="0.6"/>
+        <path d="M18 12L22 12M18 16L22 16M18 20L22 20" stroke="#C9A96E" stroke-width="1" stroke-linecap="round" opacity="0.3"/>
+      </svg>
+      <h3 class="service-name">Blowouts & Upstyles</h3>
+      <p class="service-desc">Silky blowouts, voluminous waves, elegant updos for events, weddings, and special occasions. Arrive camera-ready from the comfort of home.</p>
+      <div class="service-price">Starting at $55</div>
+    </div>
+
+    <div class="service-card reveal">
+      <svg class="service-icon" viewBox="0 0 40 40" fill="none">
+        <path d="M10 20 Q15 10 20 20 Q25 30 30 20" stroke="#C9A96E" stroke-width="1.2" stroke-linecap="round" fill="none" opacity="0.6"/>
+        <path d="M10 26 Q15 16 20 26 Q25 36 30 26" stroke="#C9A96E" stroke-width="1" stroke-linecap="round" fill="none" opacity="0.35"/>
+        <circle cx="20" cy="14" r="3" stroke="#C9A96E" stroke-width="0.8" fill="rgba(201,169,110,0.1)" opacity="0.6"/>
+      </svg>
+      <h3 class="service-name">Natural & Textured Hair</h3>
+      <p class="service-desc">Wash-and-go sets, twist-outs, braid-outs, protective styles, and expert care for all curl patterns from 3A to 4C.</p>
+      <div class="service-price">Starting at $75</div>
+    </div>
+  </div>
+</section>
+
+<div class="shimmer-line"></div>
+
+<!-- Experience / How It Works -->
+<section class="experience" id="experience">
+  <div class="exp-inner">
+
+    <!-- Salon Interior Visual -->
+    <div class="exp-visual reveal-left">
+      <svg class="interior-svg" viewBox="0 0 400 500" fill="none" xmlns="http://www.w3.org/2000/svg">
+        <defs>
+          <linearGradient id="int-bg" x1="0" y1="0" x2="0" y2="1">
+            <stop offset="0%" stop-color="#1A1C2E"/>
+            <stop offset="100%" stop-color="#0D0E18"/>
+          </linearGradient>
+          <linearGradient id="mirror-g" x1="0" y1="0" x2="0" y2="1">
+            <stop offset="0%" stop-color="#2A3055"/>
+            <stop offset="100%" stop-color="#1A1F3A"/>
+          </linearGradient>
+          <linearGradient id="chair-g" x1="0" y1="0" x2="0" y2="1">
+            <stop offset="0%" stop-color="#1E2035"/>
+            <stop offset="100%" stop-color="#14162A"/>
+          </linearGradient>
+          <radialGradient id="lamp-glow" cx="50%" cy="0%" r="60%">
+            <stop offset="0%" stop-color="#C9A96E" stop-opacity="0.25"/>
+            <stop offset="100%" stop-color="#C9A96E" stop-opacity="0"/>
+          </radialGradient>
+        </defs>
+
+        <!-- Background -->
+        <rect width="400" height="500" fill="url(#int-bg)"/>
+        <!-- Lamp glow -->
+        <ellipse cx="200" cy="0" rx="200" ry="120" fill="url(#lamp-glow)"/>
+
+        <!-- Back wall with paneling -->
+        <rect x="20" y="20" width="360" height="320" rx="4" fill="#111422" stroke="rgba(201,169,110,0.06)" stroke-width="0.5"/>
+        <!-- Wall panels -->
+        <rect x="40" y="40" width="150" height="280" rx="2" fill="rgba(201,169,110,0.03)" stroke="rgba(201,169,110,0.06)" stroke-width="0.5"/>
+        <rect x="210" y="40" width="150" height="280" rx="2" fill="rgba(201,169,110,0.03)" stroke="rgba(201,169,110,0.06)" stroke-width="0.5"/>
+
+        <!-- Mirror 1 -->
+        <rect x="50" y="55" width="130" height="200" rx="3" fill="url(#mirror-g)" stroke="rgba(201,169,110,0.3)" stroke-width="1"/>
+        <rect x="58" y="63" width="114" height="184" rx="1" fill="rgba(255,255,255,0.03)"/>
+        <!-- Mirror reflection glints -->
+        <path d="M65 70 L80 65" stroke="rgba(255,255,255,0.12)" stroke-width="1.5" stroke-linecap="round"/>
+        <path d="M65 78 L75 74" stroke="rgba(255,255,255,0.08)" stroke-width="1" stroke-linecap="round"/>
+        <!-- Mirror shelf -->
+        <rect x="45" y="255" width="140" height="6" rx="1" fill="rgba(201,169,110,0.25)"/>
+        <!-- Products on shelf -->
+        <rect x="55" y="242" width="12" height="14" rx="2" fill="rgba(201,169,110,0.2)"/>
+        <rect x="72" y="238" width="9" height="18" rx="2" fill="rgba(232,196,190,0.15)"/>
+        <rect x="86" y="244" width="14" height="12" rx="1" fill="rgba(201,169,110,0.12)"/>
+        <rect x="105" y="240" width="8" height="16" rx="2" fill="rgba(201,169,110,0.18)"/>
+        <rect x="118" y="246" width="10" height="10" rx="1" fill="rgba(201,169,110,0.12)"/>
+        <rect x="133" y="241" width="10" height="15" rx="2" fill="rgba(232,196,190,0.1)"/>
+
+        <!-- Mirror 2 -->
+        <rect x="220" y="55" width="130" height="200" rx="3" fill="url(#mirror-g)" stroke="rgba(201,169,110,0.3)" stroke-width="1"/>
+        <rect x="228" y="63" width="114" height="184" rx="1" fill="rgba(255,255,255,0.03)"/>
+        <path d="M235 70 L250 65" stroke="rgba(255,255,255,0.12)" stroke-width="1.5" stroke-linecap="round"/>
+        <rect x="215" y="255" width="140" height="6" rx="1" fill="rgba(201,169,110,0.25)"/>
+        <rect x="225" y="242" width="12" height="14" rx="2" fill="rgba(201,169,110,0.15)"/>
+        <rect x="242" y="238" width="9" height="18" rx="2" fill="rgba(232,196,190,0.12)"/>
+        <rect x="256" y="244" width="14" height="12" rx="1" fill="rgba(201,169,110,0.1)"/>
+        <rect x="280" y="241" width="10" height="15" rx="2" fill="rgba(232,196,190,0.1)"/>
+
+        <!-- Light strip at top -->
+        <rect x="20" y="20" width="360" height="2" rx="1" fill="rgba(201,169,110,0.4)"/>
+        <!-- Pendant lamp -->
+        <line x1="200" y1="0" x2="200" y2="18" stroke="rgba(201,169,110,0.4)" stroke-width="0.5"/>
+        <ellipse cx="200" cy="20" rx="20" ry="6" fill="rgba(201,169,110,0.15)" stroke="rgba(201,169,110,0.3)" stroke-width="0.5"/>
+
+        <!-- Salon Chair 1 -->
+        <g transform="translate(60, 310)">
+          <!-- Base -->
+          <rect x="15" y="135" width="80" height="6" rx="2" fill="rgba(201,169,110,0.2)"/>
+          <rect x="45" y="100" width="20" height="38" rx="2" fill="rgba(201,169,110,0.15)"/>
+          <!-- Seat -->
+          <rect x="10" y="80" width="90" height="25" rx="6" fill="url(#chair-g)" stroke="rgba(201,169,110,0.2)" stroke-width="0.5"/>
+          <!-- Back -->
+          <rect x="20" y="20" width="70" height="65" rx="6" fill="url(#chair-g)" stroke="rgba(201,169,110,0.2)" stroke-width="0.5"/>
+          <!-- Armrests -->
+          <rect x="5" y="75" width="10" height="30" rx="3" fill="rgba(201,169,110,0.15)"/>
+          <rect x="95" y="75" width="10" height="30" rx="3" fill="rgba(201,169,110,0.15)"/>
+          <!-- Headrest -->
+          <rect x="30" y="8" width="50" height="18" rx="5" fill="url(#chair-g)" stroke="rgba(201,169,110,0.2)" stroke-width="0.5"/>
+        </g>
+
+        <!-- Salon Chair 2 -->
+        <g transform="translate(230, 310)">
+          <rect x="15" y="135" width="80" height="6" rx="2" fill="rgba(201,169,110,0.2)"/>
+          <rect x="45" y="100" width="20" height="38" rx="2" fill="rgba(201,169,110,0.15)"/>
+          <rect x="10" y="80" width="90" height="25" rx="6" fill="url(#chair-g)" stroke="rgba(201,169,110,0.2)" stroke-width="0.5"/>
+          <rect x="20" y="20" width="70" height="65" rx="6" fill="url(#chair-g)" stroke="rgba(201,169,110,0.2)" stroke-width="0.5"/>
+          <rect x="5" y="75" width="10" height="30" rx="3" fill="rgba(201,169,110,0.15)"/>
+          <rect x="95" y="75" width="10" height="30" rx="3" fill="rgba(201,169,110,0.15)"/>
+          <rect x="30" y="8" width="50" height="18" rx="5" fill="url(#chair-g)" stroke="rgba(201,169,110,0.2)" stroke-width="0.5"/>
+        </g>
+
+        <!-- Floor -->
+        <rect x="0" y="455" width="400" height="45" fill="#0B0D17"/>
+        <rect x="0" y="455" width="400" height="1" fill="rgba(201,169,110,0.1)"/>
+        <!-- Floor tiles hint -->
+        <line x1="100" y1="455" x2="100" y2="500" stroke="rgba(201,169,110,0.04)" stroke-width="0.5"/>
+        <line x1="200" y1="455" x2="200" y2="500" stroke="rgba(201,169,110,0.04)" stroke-width="0.5"/>
+        <line x1="300" y1="455" x2="300" y2="500" stroke="rgba(201,169,110,0.04)" stroke-width="0.5"/>
+
+        <!-- Gold accent text overlay -->
+        <text x="200" y="490" text-anchor="middle" font-family="'DM Sans', sans-serif" font-size="9" letter-spacing="5" fill="rgba(201,169,110,0.25)">THE STUDIO</text>
+      </svg>
+    </div>
+
+    <!-- Steps -->
+    <div class="exp-steps reveal-right">
+      <div class="section-label">How It Works</div>
+      <h2 class="services-heading" style="margin-bottom:2.5rem">
+        Salon luxury,<br><em>simplified.</em>
+      </h2>
+
+      <div class="exp-step">
+        <div class="step-num">1</div>
+        <div class="step-content">
+          <h3>Book Online or By Phone</h3>
+          <p>Choose your services, pick a time that suits you, and share your Phoenix-area address. Flexible morning, afternoon, and evening slots available.</p>
+        </div>
+      </div>
+
+      <div class="exp-step">
+        <div class="step-num">2</div>
+        <div class="step-content">
+          <h3>We Come to You</h3>
+          <p>Our beautifully appointed van arrives at your door, fully stocked with professional-grade products, tools, and everything needed for a complete salon experience.</p>
+        </div>
+      </div>
+
+      <div class="exp-step">
+        <div class="step-num">3</div>
+        <div class="step-content">
+          <h3>Your Own Private Studio</h3>
+          <p>Step into the van and enjoy a full salon chair, professional lighting, salon-quality products, and Sweet's undivided, unhurried attention.</p>
+        </div>
+      </div>
+
+      <div class="exp-step">
+        <div class="step-num">4</div>
+        <div class="step-content">
+          <h3>Walk Back to Your Life</h3>
+          <p>No commute, no parking, no waiting. Just walk back to your front door feeling radiant — and tell us how you love it next time.</p>
+        </div>
+      </div>
+    </div>
+
+  </div>
+</section>
+
+<!-- Stats Banner -->
+<div class="stats-banner">
+  <div class="stats-inner">
+    <div class="stat reveal">
+      <div class="stat-num" data-target="500">0</div>
+      <div class="stat-label">Happy clients</div>
+    </div>
+    <div class="stat reveal">
+      <div class="stat-num">5★</div>
+      <div class="stat-label">Average rating</div>
+    </div>
+    <div class="stat reveal">
+      <div class="stat-num" data-target="15">0</div>
+      <div class="stat-label">Phoenix neighborhoods served</div>
+    </div>
+    <div class="stat reveal">
+      <div class="stat-num" data-target="10">0</div>
+      <div class="stat-label">Years of experience</div>
+    </div>
+  </div>
+</div>
+
+<!-- Testimonials -->
+<section class="testimonials" id="testimonials">
+  <div class="section-label reveal" style="justify-content:center;">What Clients Say</div>
+  <h2 class="services-heading reveal" style="text-align:center;margin:0 auto 0;max-width:500px;">
+    Loved by Phoenix,<br><em>one driveway at a time.</em>
+  </h2>
+
+  <div class="testi-track">
+    <div class="testi-card reveal">
+      <div class="testi-mark">"</div>
+      <div class="stars">★★★★★</div>
+      <p class="testi-quote">Sweet showed up right on time with the most gorgeous van I've ever seen. My balayage came out absolutely stunning — better than anything I've gotten at a brick-and-mortar salon.</p>
+      <div class="testi-author">
+        <div class="testi-avatar">A</div>
+        <div>
+          <div class="testi-name">Alicia M.</div>
+          <div class="testi-area">Scottsdale, AZ</div>
+        </div>
+      </div>
+    </div>
+
+    <div class="testi-card reveal">
+      <div class="testi-mark">"</div>
+      <div class="stars">★★★★★</div>
+      <p class="testi-quote">As a busy mom, I never have time to get to a salon. Sweet's Mobile has been an absolute game-changer. My highlights look incredible and I didn't have to leave my kids for a second.</p>
+      <div class="testi-author">
+        <div class="testi-avatar">J</div>
+        <div>
+          <div class="testi-name">Jessica R.</div>
+          <div class="testi-area">Chandler, AZ</div>
+        </div>
+      </div>
+    </div>
+
+    <div class="testi-card reveal">
+      <div class="testi-mark">"</div>
+      <div class="stars">★★★★★</div>
+      <p class="testi-quote">The van interior is like walking into a mini luxury salon. Incredible products, a relaxed atmosphere, and Sweet is so talented. I booked my next three appointments before she even left.</p>
+      <div class="testi-author">
+        <div class="testi-avatar">M</div>
+        <div>
+          <div class="testi-name">Maria L.</div>
+          <div class="testi-area">Tempe, AZ</div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<div class="shimmer-line"></div>
+
+<!-- Coverage Area -->
+<section class="coverage" id="coverage">
+  <div class="coverage-inner">
+    <div class="reveal-left">
+      <div class="section-label">Service Area</div>
+      <h2 class="services-heading">
+        Serving all of<br>Greater <em>Phoenix.</em>
+      </h2>
+      <p style="color:var(--text-muted);font-size:0.92rem;font-weight:300;line-height:1.75;margin-bottom:1rem;">
+        Sweet's Mobile Salon travels to homes, hotels, event venues, and offices across the entire Phoenix metro area. Not sure if we cover your address? Just call.
+      </p>
+      <div class="area-list">
+        <span class="area-item">Phoenix</span>
+        <span class="area-item">Scottsdale</span>
+        <span class="area-item">Tempe</span>
+        <span class="area-item">Chandler</span>
+        <span class="area-item">Mesa</span>
+        <span class="area-item">Glendale</span>
+        <span class="area-item">Cave Creek</span>
+        <span class="area-item">Carefree</span>
+        <span class="area-item">Paradise Valley</span>
+        <span class="area-item">Peoria</span>
+        <span class="area-item">Gilbert</span>
+        <span class="area-item">Ahwatukee</span>
+        <span class="area-item">Goodyear</span>
+        <span class="area-item">Surprise</span>
+        <span class="area-item">Fountain Hills</span>
+        <span class="area-item">Sun City</span>
+      </div>
+    </div>
+
+    <!-- Phoenix Area SVG Map -->
+    <div class="reveal-right" style="position:relative;">
+      <svg viewBox="0 0 400 420" fill="none" xmlns="http://www.w3.org/2000/svg" style="width:100%;max-width:400px;display:block;">
+        <defs>
+          <radialGradient id="map-glow" cx="50%" cy="50%" r="50%">
+            <stop offset="0%" stop-color="#C9A96E" stop-opacity="0.1"/>
+            <stop offset="100%" stop-color="#C9A96E" stop-opacity="0"/>
+          </radialGradient>
+        </defs>
+
+        <!-- Background -->
+        <rect width="400" height="420" fill="#0D0E18" rx="4"/>
+        <ellipse cx="200" cy="210" rx="180" ry="180" fill="url(#map-glow)"/>
+
+        <!-- Grid lines -->
+        <g stroke="rgba(201,169,110,0.05)" stroke-width="0.5">
+          <line x1="100" y1="0" x2="100" y2="420"/>
+          <line x1="200" y1="0" x2="200" y2="420"/>
+          <line x1="300" y1="0" x2="300" y2="420"/>
+          <line x1="0" y1="105" x2="400" y2="105"/>
+          <line x1="0" y1="210" x2="400" y2="210"/>
+          <line x1="0" y1="315" x2="400" y2="315"/>
+        </g>
+
+        <!-- Greater Phoenix blob outline -->
+        <path d="M60 80 L340 80 L360 100 L370 200 L350 330 L200 380 L50 330 L30 200 L40 100 Z"
+              fill="rgba(201,169,110,0.04)" stroke="rgba(201,169,110,0.15)" stroke-width="0.5" stroke-dasharray="4,3"/>
+
+        <!-- Location dots with labels -->
+        <!-- Phoenix (center) -->
+        <circle cx="200" cy="220" r="8" fill="rgba(201,169,110,0.15)" stroke="#C9A96E" stroke-width="1.5"/>
+        <circle cx="200" cy="220" r="3" fill="#C9A96E"/>
+        <circle class="ping" cx="200" cy="220" r="8" fill="none" stroke="#C9A96E" stroke-width="1" opacity="0.5"/>
+        <text x="214" y="218" fill="rgba(201,169,110,0.9)" font-family="'DM Sans',sans-serif" font-size="11" font-weight="500">Phoenix</text>
+
+        <!-- Scottsdale -->
+        <circle cx="295" cy="185" r="5" fill="rgba(201,169,110,0.08)" stroke="rgba(201,169,110,0.5)" stroke-width="1"/>
+        <circle cx="295" cy="185" r="2" fill="rgba(201,169,110,0.6)"/>
+        <text x="305" y="183" fill="rgba(201,169,110,0.6)" font-family="'DM Sans',sans-serif" font-size="9.5">Scottsdale</text>
+
+        <!-- Tempe -->
+        <circle cx="245" cy="255" r="4" fill="rgba(201,169,110,0.08)" stroke="rgba(201,169,110,0.4)" stroke-width="1"/>
+        <circle cx="245" cy="255" r="1.5" fill="rgba(201,169,110,0.5)"/>
+        <text x="253" y="252" fill="rgba(201,169,110,0.55)" font-family="'DM Sans',sans-serif" font-size="9">Tempe</text>
+
+        <!-- Chandler -->
+        <circle cx="270" cy="305" r="4" fill="rgba(201,169,110,0.08)" stroke="rgba(201,169,110,0.4)" stroke-width="1"/>
+        <circle cx="270" cy="305" r="1.5" fill="rgba(201,169,110,0.5)"/>
+        <text x="278" y="302" fill="rgba(201,169,110,0.55)" font-family="'DM Sans',sans-serif" font-size="9">Chandler</text>
+
+        <!-- Mesa -->
+        <circle cx="318" cy="270" r="4" fill="rgba(201,169,110,0.08)" stroke="rgba(201,169,110,0.4)" stroke-width="1"/>
+        <circle cx="318" cy="270" r="1.5" fill="rgba(201,169,110,0.5)"/>
+        <text x="326" y="268" fill="rgba(201,169,110,0.55)" font-family="'DM Sans',sans-serif" font-size="9">Mesa</text>
+
+        <!-- Glendale -->
+        <circle cx="130" cy="185" r="4" fill="rgba(201,169,110,0.08)" stroke="rgba(201,169,110,0.4)" stroke-width="1"/>
+        <circle cx="130" cy="185" r="1.5" fill="rgba(201,169,110,0.5)"/>
+        <text x="82" y="182" fill="rgba(201,169,110,0.55)" font-family="'DM Sans',sans-serif" font-size="9">Glendale</text>
+
+        <!-- Cave Creek -->
+        <circle cx="255" cy="115" r="4" fill="rgba(232,196,190,0.15)" stroke="rgba(232,196,190,0.5)" stroke-width="1"/>
+        <circle cx="255" cy="115" r="1.5" fill="rgba(232,196,190,0.6)"/>
+        <text x="263" y="112" fill="rgba(232,196,190,0.7)" font-family="'DM Sans',sans-serif" font-size="9">Cave Creek</text>
+
+        <!-- Paradise Valley -->
+        <circle cx="268" cy="155" r="4" fill="rgba(201,169,110,0.08)" stroke="rgba(201,169,110,0.4)" stroke-width="1"/>
+        <text x="145" y="152" fill="rgba(201,169,110,0.5)" font-family="'DM Sans',sans-serif" font-size="9">Paradise Valley</text>
+
+        <!-- Gilbert -->
+        <circle cx="318" cy="320" r="4" fill="rgba(201,169,110,0.08)" stroke="rgba(201,169,110,0.4)" stroke-width="1"/>
+        <circle cx="318" cy="320" r="1.5" fill="rgba(201,169,110,0.5)"/>
+        <text x="326" y="317" fill="rgba(201,169,110,0.55)" font-family="'DM Sans',sans-serif" font-size="9">Gilbert</text>
+
+        <!-- Peoria -->
+        <circle cx="120" cy="145" r="4" fill="rgba(201,169,110,0.08)" stroke="rgba(201,169,110,0.4)" stroke-width="1"/>
+        <circle cx="120" cy="145" r="1.5" fill="rgba(201,169,110,0.5)"/>
+        <text x="75" y="142" fill="rgba(201,169,110,0.55)" font-family="'DM Sans',sans-serif" font-size="9">Peoria</text>
+
+        <!-- Fountain Hills -->
+        <circle cx="355" cy="165" r="3.5" fill="rgba(201,169,110,0.08)" stroke="rgba(201,169,110,0.35)" stroke-width="1"/>
+        <text x="315" y="158" fill="rgba(201,169,110,0.45)" font-family="'DM Sans',sans-serif" font-size="8">Fountain Hills</text>
+
+        <!-- Surprise -->
+        <circle cx="70" cy="160" r="3.5" fill="rgba(201,169,110,0.08)" stroke="rgba(201,169,110,0.35)" stroke-width="1"/>
+        <text x="78" y="157" fill="rgba(201,169,110,0.45)" font-family="'DM Sans',sans-serif" font-size="8">Surprise</text>
+
+        <!-- Connecting lines from Phoenix -->
+        <line x1="200" y1="220" x2="295" y2="185" stroke="rgba(201,169,110,0.07)" stroke-width="0.5"/>
+        <line x1="200" y1="220" x2="245" y2="255" stroke="rgba(201,169,110,0.07)" stroke-width="0.5"/>
+        <line x1="200" y1="220" x2="130" y2="185" stroke="rgba(201,169,110,0.07)" stroke-width="0.5"/>
+        <line x1="200" y1="220" x2="270" y2="305" stroke="rgba(201,169,110,0.07)" stroke-width="0.5"/>
+        <line x1="200" y1="220" x2="318" y2="270" stroke="rgba(201,169,110,0.07)" stroke-width="0.5"/>
+
+        <!-- Compass rose -->
+        <g transform="translate(50, 370)">
+          <circle cx="0" cy="0" r="14" stroke="rgba(201,169,110,0.15)" stroke-width="0.5" fill="rgba(201,169,110,0.04)"/>
+          <path d="M0 -10L2 -2L0 0L-2 -2Z" fill="rgba(201,169,110,0.5)"/>
+          <path d="M0 10L2 2L0 0L-2 2Z" fill="rgba(201,169,110,0.2)"/>
+          <text x="0" y="-16" text-anchor="middle" fill="rgba(201,169,110,0.5)" font-family="'DM Sans',sans-serif" font-size="7" font-weight="500">N</text>
+        </g>
+
+        <!-- Map border -->
+        <rect width="400" height="420" rx="4" fill="none" stroke="rgba(201,169,110,0.1)" stroke-width="1"/>
+
+        <!-- Ping animation for Phoenix dot -->
+        <style>
+          .ping { animation: map-ping 2s ease-out infinite; }
+          @keyframes map-ping {
+            0%   { r: 8; opacity: 0.5; }
+            100% { r: 28; opacity: 0; }
+          }
+        </style>
+      </svg>
+    </div>
+
+  </div>
+</section>
+
+<!-- Booking Section -->
+<section class="booking" id="booking">
+  <div class="booking-inner">
+    <div class="section-label reveal" style="justify-content:center;">Reserve Your Visit</div>
+    <h2 class="reveal">
+      Ready to be<br><em>transformed?</em>
+    </h2>
+    <p class="booking-sub reveal">
+      Tell us a little about what you're looking for and we'll be in touch within a few hours to confirm your appointment and discuss your vision.
+    </p>
+
+    <form class="booking-form" onsubmit="handleBooking(event)">
+      <div class="form-group reveal">
+        <label class="form-label">First Name</label>
+        <input type="text" class="form-input" placeholder="Your first name" required/>
+      </div>
+      <div class="form-group reveal">
+        <label class="form-label">Last Name</label>
+        <input type="text" class="form-input" placeholder="Your last name" required/>
+      </div>
+      <div class="form-group reveal">
+        <label class="form-label">Phone</label>
+        <input type="tel" class="form-input" placeholder="(602) 555-0100"/>
+      </div>
+      <div class="form-group reveal">
+        <label class="form-label">Email</label>
+        <input type="email" class="form-input" placeholder="your@email.com" required/>
+      </div>
+      <div class="form-group full reveal">
+        <label class="form-label">Service</label>
+        <select class="form-select form-input">
+          <option value="">Select a service...</option>
+          <option>Haircut & Style</option>
+          <option>Color & Highlights</option>
+          <option>Balayage / Ombré</option>
+          <option>Perm or Body Wave</option>
+          <option>Keratin / Smoothing Treatment</option>
+          <option>Blowout</option>
+          <option>Natural & Textured Hair</option>
+          <option>Special Occasion Upstyle</option>
+          <option>Multiple Services</option>
+        </select>
+      </div>
+      <div class="form-group full reveal">
+        <label class="form-label">Your Neighborhood or Zip Code</label>
+        <input type="text" class="form-input" placeholder="e.g. Scottsdale 85251 or Cave Creek"/>
+      </div>
+      <div class="form-group full reveal" style="grid-column:1/-1;">
+        <button type="submit" class="btn-primary" style="width:100%;padding:1.1rem;">Request Appointment</button>
+      </div>
+    </form>
+
+    <div class="phone-display reveal">
+      <div class="phone-label">Or call / text directly</div>
+      <a href="tel:+16025550100" class="phone-num">(602) 555-0100</a>
+      <div style="font-size:0.78rem;color:var(--text-dim);margin-top:0.25rem;font-weight:300;">Mon – Sat, 8am – 7pm</div>
+    </div>
+  </div>
+</section>
+
+<!-- Footer -->
+<footer>
+  <div class="footer-inner">
+    <div>
+      <div class="footer-brand">Sweet's Mobile Salon</div>
+      <p class="footer-tagline">Phoenix's premier mobile hair studio, bringing full-service salon care directly to your door — on your schedule, on your terms.</p>
+    </div>
+    <div class="footer-col">
+      <h4>Services</h4>
+      <ul>
+        <li><a href="#services">Haircuts & Styling</a></li>
+        <li><a href="#services">Color & Highlights</a></li>
+        <li><a href="#services">Perms & Waves</a></li>
+        <li><a href="#services">Treatments</a></li>
+        <li><a href="#services">Blowouts & Upstyles</a></li>
+      </ul>
+    </div>
+    <div class="footer-col">
+      <h4>Connect</h4>
+      <ul>
+        <li><a href="#booking">Book Appointment</a></li>
+        <li><a href="tel:+16025550100">(602) 555-0100</a></li>
+        <li><a href="#coverage">Service Area</a></li>
+        <li><a href="#">Instagram</a></li>
+        <li><a href="#">Facebook</a></li>
+      </ul>
+    </div>
+  </div>
+  <div class="footer-bottom">
+    <div class="footer-copy">© 2025 Sweet's Mobile Salon · Phoenix, AZ · All rights reserved.</div>
+    <div class="social-links">
+      <a href="#" class="social-link" aria-label="Instagram">Ig</a>
+      <a href="#" class="social-link" aria-label="Facebook">Fb</a>
+      <a href="#" class="social-link" aria-label="TikTok">Tk</a>
+    </div>
+  </div>
+</footer>
+
+<script>
+// ——— Cursor ———
+const cursor = document.getElementById('cursor');
+const ring = document.getElementById('cursor-ring');
+let mouseX = 0, mouseY = 0, ringX = 0, ringY = 0;
+
+document.addEventListener('mousemove', e => {
+  mouseX = e.clientX; mouseY = e.clientY;
+  cursor.style.left = mouseX + 'px';
+  cursor.style.top = mouseY + 'px';
+});
+
+function animateRing() {
+  ringX += (mouseX - ringX) * 0.12;
+  ringY += (mouseY - ringY) * 0.12;
+  ring.style.left = ringX + 'px';
+  ring.style.top = ringY + 'px';
+  requestAnimationFrame(animateRing);
+}
+animateRing();
+
+document.querySelectorAll('a,button,.service-card,.testi-card,.area-item').forEach(el => {
+  el.addEventListener('mouseenter', () => { cursor.classList.add('hover'); ring.classList.add('hover'); });
+  el.addEventListener('mouseleave', () => { cursor.classList.remove('hover'); ring.classList.remove('hover'); });
+});
+
+// ——— Progress bar ———
+const bar = document.getElementById('progress-bar');
+window.addEventListener('scroll', () => {
+  const h = document.documentElement.scrollHeight - window.innerHeight;
+  bar.style.transform = `scaleX(${window.scrollY / h})`;
+});
+
+// ——— Nav scroll ———
+const nav = document.getElementById('nav');
+window.addEventListener('scroll', () => {
+  nav.classList.toggle('scrolled', window.scrollY > 60);
+});
+
+// ——— Mobile nav ———
+const hamburger = document.getElementById('hamburger');
+const mobileNav = document.getElementById('mobile-nav');
+hamburger.addEventListener('click', () => {
+  mobileNav.classList.toggle('open');
+  const spans = hamburger.querySelectorAll('span');
+  if (mobileNav.classList.contains('open')) {
+    spans[0].style.transform = 'translateY(6.5px) rotate(45deg)';
+    spans[1].style.opacity = '0';
+    spans[2].style.transform = 'translateY(-6.5px) rotate(-45deg)';
+  } else {
+    spans.forEach(s => { s.style.transform = ''; s.style.opacity = ''; });
+  }
+});
+function closeMobileNav() {
+  mobileNav.classList.remove('open');
+  hamburger.querySelectorAll('span').forEach(s => { s.style.transform = ''; s.style.opacity = ''; });
+}
+
+// ——— Starfield Canvas ———
+(function() {
+  const canvas = document.getElementById('starfield');
+  const ctx = canvas.getContext('2d');
+  let W, H, stars = [];
+
+  function resize() {
+    W = canvas.width = canvas.offsetWidth;
+    H = canvas.height = canvas.offsetHeight;
+    if (stars.length === 0) {
+      for (let i = 0; i < 180; i++) {
+        stars.push({
+          x: Math.random() * W,
+          y: Math.random() * H,
+          r: Math.random() * 1.2 + 0.2,
+          a: Math.random(),
+          da: (Math.random() - 0.5) * 0.005,
+          speed: Math.random() * 0.08 + 0.02
+        });
+      }
+    }
+  }
+
+  function draw() {
+    ctx.clearRect(0, 0, W, H);
+    stars.forEach(s => {
+      s.y -= s.speed;
+      if (s.y < -2) s.y = H + 2;
+      s.a += s.da;
+      if (s.a <= 0 || s.a >= 1) s.da *= -1;
+      ctx.beginPath();
+      ctx.arc(s.x, s.y, s.r, 0, Math.PI * 2);
+      ctx.fillStyle = `rgba(201,169,110,${s.a * 0.5})`;
+      ctx.fill();
+    });
+    requestAnimationFrame(draw);
+  }
+
+  resize();
+  window.addEventListener('resize', () => {
+    W = canvas.width = canvas.offsetWidth;
+    H = canvas.height = canvas.offsetHeight;
+  });
+  draw();
+})();
+
+// ——— GSAP Animations ———
+gsap.registerPlugin(ScrollTrigger, ScrollToPlugin);
+
+// Hero title stagger
+gsap.from('.hero-title .line-inner', {
+  y: '110%',
+  duration: 1.1,
+  stagger: 0.12,
+  ease: 'power4.out',
+  delay: 0.3
+});
+gsap.from('.hero-eyebrow', { opacity: 0, y: 20, duration: 0.8, delay: 0.15 });
+gsap.from('.hero-sub', { opacity: 0, y: 20, duration: 0.8, delay: 0.7 });
+gsap.from('.hero-cta', { opacity: 0, y: 20, duration: 0.8, delay: 0.9 });
+gsap.from('.scroll-hint', { opacity: 0, duration: 0.8, delay: 1.4 });
+
+// Van entrance
+gsap.from('#van-scene', {
+  x: 200,
+  opacity: 0,
+  duration: 1.4,
+  delay: 0.5,
+  ease: 'power3.out'
+});
+
+// Parallax van on scroll
+gsap.to('#van-scene', {
+  y: -60,
+  ease: 'none',
+  scrollTrigger: { trigger: '.hero', scrub: 1 }
+});
+
+// Road dashes animation
+gsap.to('.road-dash', {
+  x: -680,
+  duration: 3,
+  ease: 'none',
+  repeat: -1,
+  stagger: { each: 0.6 }
+});
+
+// Reveal animations
+gsap.utils.toArray('.reveal').forEach(el => {
+  gsap.to(el, {
+    opacity: 1,
+    y: 0,
+    duration: 0.9,
+    ease: 'power3.out',
+    scrollTrigger: { trigger: el, start: 'top 85%', once: true }
+  });
+});
+gsap.utils.toArray('.reveal-left').forEach(el => {
+  gsap.to(el, {
+    opacity: 1,
+    x: 0,
+    duration: 1,
+    ease: 'power3.out',
+    scrollTrigger: { trigger: el, start: 'top 80%', once: true }
+  });
+});
+gsap.utils.toArray('.reveal-right').forEach(el => {
+  gsap.to(el, {
+    opacity: 1,
+    x: 0,
+    duration: 1,
+    ease: 'power3.out',
+    scrollTrigger: { trigger: el, start: 'top 80%', once: true }
+  });
+});
+
+// Stats counter
+gsap.utils.toArray('[data-target]').forEach(el => {
+  const target = parseInt(el.dataset.target);
+  ScrollTrigger.create({
+    trigger: el,
+    start: 'top 85%',
+    once: true,
+    onEnter: () => {
+      gsap.to({ val: 0 }, {
+        val: target,
+        duration: 1.8,
+        ease: 'power2.out',
+        onUpdate: function() {
+          el.textContent = Math.round(this.targets()[0].val) + '+';
+        }
+      });
+    }
+  });
+});
+
+// Service cards hover lift
+document.querySelectorAll('.service-card').forEach(card => {
+  card.addEventListener('mouseenter', () => gsap.to(card, { y: -4, duration: 0.3 }));
+  card.addEventListener('mouseleave', () => gsap.to(card, { y: 0, duration: 0.3 }));
+});
+
+// Step number highlight on scroll
+gsap.utils.toArray('.exp-step').forEach((step, i) => {
+  const num = step.querySelector('.step-num');
+  ScrollTrigger.create({
+    trigger: step,
+    start: 'top 60%',
+    once: true,
+    onEnter: () => {
+      gsap.to(num, { color: 'rgba(201,169,110,0.7)', duration: 0.6, delay: i * 0.1 });
+      gsap.from(step, { opacity: 0, x: 20, duration: 0.6, delay: i * 0.1 });
+    }
+  });
+});
+
+// Smooth scroll for anchor links
+document.querySelectorAll('a[href^="#"]').forEach(link => {
+  link.addEventListener('click', e => {
+    const target = document.querySelector(link.getAttribute('href'));
+    if (target) {
+      e.preventDefault();
+      gsap.to(window, { scrollTo: { y: target, offsetY: 70 }, duration: 1, ease: 'power3.inOut' });
+    }
+  });
+});
+
+// ——— Booking form ———
+function handleBooking(e) {
+  e.preventDefault();
+  const btn = e.target.querySelector('button[type="submit"]');
+  btn.textContent = 'Request Sent ✓';
+  btn.style.background = 'rgba(201,169,110,0.2)';
+  btn.style.color = 'var(--gold)';
+  btn.style.border = '1px solid rgba(201,169,110,0.4)';
+  btn.disabled = true;
+  gsap.from(btn, { scale: 0.98, duration: 0.3, ease: 'back.out' });
+}
+</script>
+
+</body>
+</html>
