@@ -1,0 +1,1159 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover" />
+<title>Sweet's Mobile Salon — The salon that pulls into your driveway · Phoenix, AZ</title>
+<meta name="description" content="Sweet's Mobile Salon brings a fully-appointed studio van to your door anywhere in Greater Phoenix. Cuts, color, balayage, perms, and treatments — done beautifully in your own driveway." />
+<meta name="theme-color" content="#F6EFE4" />
+
+<!-- Fonts -->
+<link rel="preconnect" href="https://fonts.googleapis.com" />
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:ital,opsz,wght@0,9..144,300;0,9..144,400;0,9..144,500;0,9..144,600;1,9..144,300;1,9..144,400;1,9..144,500&family=Inter:wght@400;500;600&family=Space+Mono:wght@400;700&display=swap" rel="stylesheet" />
+
+<!-- Libraries -->
+<script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.5/gsap.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.5/ScrollTrigger.min.js"></script>
+
+<style>
+/* =========================================================
+   SWEET'S MOBILE SALON — "Golden Hour, Delivered."
+   ========================================================= */
+:root{
+  --bone:#F6EFE4;        /* warm paper base            */
+  --bone-2:#EFE4D2;      /* deeper sand (alt sections) */
+  --cream:#FBF6EE;       /* card surface               */
+  --ink:#2A1A2B;         /* deep aubergine-brown text  */
+  --ink-soft:#6A5358;    /* muted ink                  */
+  --clay:#C5532E;        /* terracotta accent          */
+  --coral:#E8775A;       /* warm coral                 */
+  --gold:#D29A33;        /* amber gold                 */
+  --rose:#E7B4A4;        /* dusty blush                */
+  --sage:#7E8B6A;        /* desert sage                */
+  --dusk:#1C1019;        /* deep plum-black (dark bg)  */
+  --dusk-2:#2E1A2B;
+  --line:rgba(42,26,43,.14);
+  --line-strong:rgba(42,26,43,.28);
+
+  --serif:"Fraunces", Georgia, "Times New Roman", serif;
+  --sans:"Inter", system-ui, -apple-system, "Segoe UI", Roboto, sans-serif;
+  --mono:"Space Mono", ui-monospace, "SFMono-Regular", Menlo, monospace;
+
+  --gutter:clamp(1.25rem, 5vw, 3.25rem);
+  --pad-section:clamp(5rem, 11vw, 9.5rem);
+  --maxw:1280px;
+  --r:18px;
+  --ease:cubic-bezier(.16,1,.3,1);
+}
+
+*{margin:0;padding:0;box-sizing:border-box}
+html{scroll-behavior:smooth;-webkit-text-size-adjust:100%}
+body{
+  background:var(--bone);
+  color:var(--ink);
+  font-family:var(--sans);
+  font-size:clamp(15px,1.05vw,17px);
+  line-height:1.6;
+  font-weight:400;
+  -webkit-font-smoothing:antialiased;
+  text-rendering:optimizeLegibility;
+  overflow-x:hidden;
+}
+body.is-locked{overflow:hidden}
+img,svg{display:block;max-width:100%}
+a{color:inherit;text-decoration:none}
+button{font:inherit;color:inherit;cursor:pointer;background:none;border:none}
+::selection{background:var(--coral);color:var(--bone)}
+
+/* ---------- shared layout ---------- */
+.wrap{width:min(var(--maxw), 100% - 2*var(--gutter));margin-inline:auto}
+.section{padding-block:var(--pad-section);position:relative}
+.section--alt{background:var(--bone-2)}
+.section--dark{background:var(--dusk);color:var(--bone)}
+
+.eyebrow{
+  font-family:var(--mono);
+  font-size:.72rem;
+  letter-spacing:.28em;
+  text-transform:uppercase;
+  color:var(--clay);
+  display:inline-flex;align-items:center;gap:.6rem;
+}
+.eyebrow::before{content:"";width:26px;height:1px;background:var(--clay);display:inline-block}
+.section--dark .eyebrow{color:var(--gold)}
+.section--dark .eyebrow::before{background:var(--gold)}
+
+h1,h2,h3{font-family:var(--serif);font-weight:300;line-height:1.02;letter-spacing:-.01em}
+h2{font-size:clamp(2.3rem,5.6vw,4.2rem)}
+h2 em{font-style:italic;font-weight:400}
+.lede{font-size:clamp(1.05rem,1.7vw,1.35rem);color:var(--ink-soft);max-width:46ch;line-height:1.5}
+.section--dark .lede{color:rgba(246,239,228,.74)}
+
+/* ---------- buttons ---------- */
+.btn{
+  position:relative;display:inline-flex;align-items:center;gap:.7em;
+  padding:1.02em 1.7em;border-radius:100px;
+  font-family:var(--sans);font-weight:500;font-size:.96rem;letter-spacing:.01em;
+  transition:transform .5s var(--ease), background .4s var(--ease), color .4s var(--ease), border-color .4s var(--ease);
+  will-change:transform;white-space:nowrap;
+}
+.btn .arrow{transition:transform .45s var(--ease)}
+.btn:hover .arrow{transform:translateX(5px)}
+.btn--primary{background:var(--ink);color:var(--cream)}
+.btn--primary:hover{background:var(--clay)}
+.btn--ghost{border:1.4px solid var(--line-strong);color:var(--ink)}
+.btn--ghost:hover{border-color:var(--ink);background:var(--ink);color:var(--cream)}
+.btn--light{background:var(--bone);color:var(--ink)}
+.btn--light:hover{background:var(--gold);color:var(--dusk)}
+.btn:focus-visible{outline:2.5px solid var(--clay);outline-offset:3px}
+
+/* =========================================================
+   PRELOADER
+   ========================================================= */
+#preloader{
+  position:fixed;inset:0;z-index:1000;background:var(--bone);
+  display:grid;place-items:center;
+}
+.pl-mark{font-family:var(--serif);font-weight:300;font-size:clamp(2.4rem,8vw,4.6rem);letter-spacing:-.02em;overflow:hidden}
+.pl-mark span{display:inline-block;transform:translateY(110%)}
+.pl-bar{position:absolute;left:0;bottom:0;height:2px;width:0;background:var(--clay)}
+
+/* =========================================================
+   NAV
+   ========================================================= */
+.nav{
+  position:fixed;top:0;left:0;right:0;z-index:120;
+  display:flex;align-items:center;justify-content:space-between;
+  padding:1.15rem var(--gutter);
+  transition:background .5s var(--ease), box-shadow .5s var(--ease), padding .5s var(--ease);
+}
+.nav.scrolled{background:rgba(246,239,228,.82);backdrop-filter:blur(14px);-webkit-backdrop-filter:blur(14px);box-shadow:0 1px 0 var(--line);padding-block:.85rem}
+.brand{display:flex;align-items:baseline;gap:.5rem;font-family:var(--serif);line-height:1;z-index:130}
+.brand b{font-weight:400;font-size:1.5rem;letter-spacing:-.01em}
+.brand i{font-style:italic;font-size:.78rem;font-weight:300;color:var(--clay);font-family:var(--serif)}
+.brand .dot{width:7px;height:7px;border-radius:50%;background:var(--clay);align-self:center}
+
+.nav-links{display:flex;align-items:center;gap:2.1rem}
+.nav-links a{font-size:.92rem;font-weight:500;position:relative;padding:.2rem 0}
+.nav-links a::after{content:"";position:absolute;left:0;bottom:-2px;height:1.5px;width:0;background:var(--clay);transition:width .4s var(--ease)}
+.nav-links a:hover::after{width:100%}
+.nav-cta{display:flex;align-items:center;gap:1.1rem}
+.nav-cta .btn{padding:.7em 1.25em;font-size:.88rem}
+
+.nav-toggle{display:none;width:46px;height:46px;border-radius:50%;border:1.4px solid var(--line-strong);position:relative;z-index:130}
+.nav-toggle span{position:absolute;left:13px;right:13px;height:1.6px;background:var(--ink);transition:transform .4s var(--ease), opacity .3s var(--ease)}
+.nav-toggle span:nth-child(1){top:18px}
+.nav-toggle span:nth-child(2){bottom:18px}
+.nav-toggle[aria-expanded="true"] span:nth-child(1){transform:translateY(5px) rotate(45deg)}
+.nav-toggle[aria-expanded="true"] span:nth-child(2){transform:translateY(-5px) rotate(-45deg)}
+
+.mobile-menu{
+  position:fixed;inset:0;z-index:125;background:var(--bone);
+  display:flex;flex-direction:column;justify-content:center;gap:.2rem;
+  padding:0 var(--gutter);
+  clip-path:inset(0 0 100% 0);transition:clip-path .7s var(--ease);
+  pointer-events:none;
+}
+.mobile-menu.open{clip-path:inset(0 0 0 0);pointer-events:auto}
+.mobile-menu a{font-family:var(--serif);font-weight:300;font-size:clamp(2.4rem,11vw,3.6rem);line-height:1.18;letter-spacing:-.01em}
+.mobile-menu a small{font-family:var(--mono);font-size:.7rem;color:var(--clay);margin-right:.8rem;letter-spacing:.2em;vertical-align:middle}
+.mm-foot{margin-top:2.5rem;font-family:var(--mono);font-size:.74rem;letter-spacing:.1em;color:var(--ink-soft);text-transform:uppercase}
+
+/* =========================================================
+   HERO
+   ========================================================= */
+.hero{position:relative;min-height:100svh;display:flex;align-items:flex-end;overflow:hidden}
+#gl{position:absolute;inset:0;width:100%;height:100%;z-index:0;display:block}
+.hero::after{ /* readability scrim, soft cream glow + bottom fade */
+  content:"";position:absolute;inset:0;z-index:1;pointer-events:none;
+  background:
+    radial-gradient(120% 80% at 18% 64%, rgba(251,246,238,.55), rgba(251,246,238,0) 55%),
+    linear-gradient(to top, rgba(246,239,228,.55), rgba(246,239,228,0) 32%);
+}
+.hero .wrap{position:relative;z-index:2;padding-bottom:clamp(2.5rem,6vh,5rem);padding-top:9rem;width:min(var(--maxw),100% - 2*var(--gutter))}
+.hero-top{display:flex;align-items:center;gap:1.4rem;margin-bottom:auto}
+.hero-headline{
+  font-family:var(--serif);font-weight:300;
+  font-size:clamp(3.1rem,9.2vw,8.6rem);line-height:.93;letter-spacing:-.025em;
+  margin:clamp(1.5rem,4vh,3rem) 0 1.6rem;
+  max-width:14ch;
+}
+.hero-headline em{font-style:italic;font-weight:400;color:var(--clay)}
+.line-mask{display:block;overflow:hidden;padding-bottom:.04em}
+.line-mask>span{display:block;transform:translateY(105%)}
+.hero-sub{max-width:48ch;font-size:clamp(1.05rem,1.7vw,1.32rem);color:var(--ink);opacity:.86;line-height:1.5;margin-bottom:2.2rem}
+.hero-actions{display:flex;flex-wrap:wrap;gap:1rem;align-items:center;margin-bottom:2.6rem}
+.hero-meta{display:flex;flex-wrap:wrap;gap:1.5rem 2.2rem;font-family:var(--mono);font-size:.76rem;letter-spacing:.12em;text-transform:uppercase;color:var(--ink-soft)}
+.hero-meta span{display:inline-flex;align-items:center;gap:.55rem}
+.hero-meta span::before{content:"✦";color:var(--clay);font-size:.8em}
+
+.scroll-cue{position:absolute;right:var(--gutter);bottom:clamp(2.5rem,6vh,5rem);z-index:2;display:flex;flex-direction:column;align-items:center;gap:.8rem;font-family:var(--mono);font-size:.66rem;letter-spacing:.22em;text-transform:uppercase;color:var(--ink-soft);writing-mode:vertical-rl}
+.scroll-cue .rail{width:1.5px;height:60px;background:var(--line-strong);position:relative;overflow:hidden}
+.scroll-cue .rail::after{content:"";position:absolute;top:-30%;left:0;width:100%;height:40%;background:var(--clay);animation:railRun 1.9s var(--ease) infinite}
+@keyframes railRun{0%{top:-45%}100%{top:100%}}
+
+/* floating van badge in hero */
+.hero-van{position:absolute;right:clamp(-2rem,2vw,4rem);top:18%;z-index:1;width:clamp(180px,26vw,360px);opacity:.96;will-change:transform}
+
+/* =========================================================
+   MARQUEE
+   ========================================================= */
+.marquee{background:var(--ink);color:var(--bone);padding:1.15rem 0;overflow:hidden;white-space:nowrap;border-block:1px solid rgba(246,239,228,.08)}
+.marquee-track{display:inline-flex;gap:2.4rem;will-change:transform}
+.marquee-track span{font-family:var(--serif);font-weight:300;font-style:italic;font-size:clamp(1.3rem,3vw,2.1rem);display:inline-flex;align-items:center;gap:2.4rem;letter-spacing:.01em}
+.marquee-track span::after{content:"✦";font-style:normal;color:var(--gold);font-size:.6em}
+
+/* =========================================================
+   MANIFESTO
+   ========================================================= */
+.manifesto .wrap{display:grid;gap:clamp(2.5rem,6vw,5rem)}
+.manifesto-big{font-family:var(--serif);font-weight:300;font-size:clamp(1.9rem,4.4vw,3.6rem);line-height:1.16;letter-spacing:-.015em;max-width:20ch}
+.manifesto-big .w{display:inline-block;color:var(--line-strong);transition:color .3s}
+.manifesto-big em{font-style:italic}
+.manifesto-grid{display:grid;grid-template-columns:1.1fr 1fr;gap:clamp(2rem,5vw,4rem);align-items:end}
+.manifesto-grid p{max-width:42ch;color:var(--ink-soft);font-size:1.06rem}
+.stats{display:flex;gap:clamp(1.5rem,4vw,3rem);flex-wrap:wrap}
+.stat .n{font-family:var(--serif);font-weight:300;font-size:clamp(2.6rem,6vw,4rem);line-height:1;color:var(--clay)}
+.stat .l{font-family:var(--mono);font-size:.72rem;letter-spacing:.16em;text-transform:uppercase;color:var(--ink-soft);margin-top:.6rem;display:block;max-width:14ch}
+
+/* =========================================================
+   SERVICES
+   ========================================================= */
+.svc-head{display:grid;grid-template-columns:1fr 1fr;gap:2rem;align-items:end;margin-bottom:clamp(3rem,6vw,5rem)}
+.svc-head .lede{justify-self:end}
+.svc-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:1px;background:var(--line);border:1px solid var(--line);border-radius:var(--r);overflow:hidden}
+.svc-card{
+  background:var(--cream);padding:clamp(1.8rem,3vw,2.6rem);min-height:300px;
+  display:flex;flex-direction:column;gap:1.1rem;position:relative;isolation:isolate;
+  transition:background .5s var(--ease);
+}
+.svc-card::before{content:"";position:absolute;inset:0;z-index:-1;background:linear-gradient(160deg,var(--coral),var(--clay));opacity:0;transition:opacity .5s var(--ease)}
+.svc-card:hover{background:transparent;color:var(--bone)}
+.svc-card:hover::before{opacity:1}
+.svc-card:hover .svc-ico{border-color:rgba(246,239,228,.5)}
+.svc-card:hover .svc-ico svg{stroke:var(--bone)}
+.svc-card:hover .svc-go{color:var(--bone);border-color:rgba(246,239,228,.4)}
+.svc-ico{width:54px;height:54px;border-radius:50%;border:1.4px solid var(--line-strong);display:grid;place-items:center;transition:border-color .5s var(--ease)}
+.svc-ico svg{width:26px;height:26px;stroke:var(--ink);fill:none;stroke-width:1.5;transition:stroke .5s var(--ease)}
+.svc-card h3{font-size:clamp(1.4rem,2.4vw,1.85rem);font-weight:400;letter-spacing:-.01em}
+.svc-card p{font-size:.98rem;line-height:1.5;flex:1;color:inherit;opacity:.86}
+.svc-go{margin-top:auto;align-self:flex-start;font-family:var(--mono);font-size:.7rem;letter-spacing:.16em;text-transform:uppercase;border:1px solid var(--line-strong);border-radius:100px;padding:.5rem .9rem;display:inline-flex;gap:.5rem;align-items:center;transition:.4s var(--ease)}
+
+/* =========================================================
+   THE VAN / STUDIO
+   ========================================================= */
+.studio .wrap{display:grid;grid-template-columns:1.05fr .95fr;gap:clamp(2.5rem,5vw,5rem);align-items:center}
+.studio-art{position:relative}
+.studio-art svg{width:100%;height:auto;border-radius:var(--r)}
+.studio-copy h2{margin:.9rem 0 1.4rem}
+.feat{list-style:none;display:grid;gap:.2rem;margin-top:2rem}
+.feat li{display:grid;grid-template-columns:auto 1fr;gap:1.1rem;padding:1.05rem 0;border-top:1px solid var(--line);align-items:start}
+.feat li:last-child{border-bottom:1px solid var(--line)}
+.feat .k{font-family:var(--mono);font-size:.78rem;color:var(--clay);padding-top:.2rem}
+.feat .t{font-family:var(--serif);font-size:1.18rem;font-weight:400;letter-spacing:-.01em}
+.feat .d{font-size:.94rem;color:var(--ink-soft);margin-top:.15rem}
+
+/* =========================================================
+   STEPS / HOW IT WORKS
+   ========================================================= */
+.steps .head{text-align:center;margin-bottom:clamp(3rem,7vw,5.5rem);display:grid;gap:1.2rem;justify-items:center}
+.steps-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:clamp(1.5rem,3vw,2.5rem);position:relative}
+.steps-line{position:absolute;top:34px;left:8%;right:8%;height:1.5px;background:var(--line);overflow:hidden;z-index:0}
+.steps-line i{position:absolute;inset:0;background:var(--clay);transform-origin:left;transform:scaleX(0)}
+.step{position:relative;z-index:1;display:grid;gap:1rem}
+.step .num{width:70px;height:70px;border-radius:50%;background:var(--bone);border:1.5px solid var(--line-strong);display:grid;place-items:center;font-family:var(--serif);font-size:1.5rem;color:var(--clay);font-style:italic}
+.section--alt .step .num{background:var(--bone-2)}
+.step h3{font-size:1.35rem;font-weight:400}
+.step p{font-size:.96rem;color:var(--ink-soft);max-width:26ch}
+
+/* =========================================================
+   SERVICE AREA
+   ========================================================= */
+.area .wrap{display:grid;grid-template-columns:.9fr 1.1fr;gap:clamp(2.5rem,5vw,4.5rem);align-items:center}
+.area-copy h2{margin:1rem 0 1.3rem}
+.hours{display:inline-flex;align-items:center;gap:.8rem;margin-top:1.8rem;font-family:var(--mono);font-size:.8rem;letter-spacing:.12em;text-transform:uppercase;color:var(--ink)}
+.hours .pulse{width:9px;height:9px;border-radius:50%;background:var(--sage);box-shadow:0 0 0 0 rgba(126,139,106,.6);animation:pulse 2.4s infinite}
+@keyframes pulse{0%{box-shadow:0 0 0 0 rgba(126,139,106,.5)}70%{box-shadow:0 0 0 10px rgba(126,139,106,0)}100%{box-shadow:0 0 0 0 rgba(126,139,106,0)}}
+.chips{display:flex;flex-wrap:wrap;gap:.7rem}
+.chip{border:1px solid var(--line-strong);border-radius:100px;padding:.6rem 1.15rem;font-size:.92rem;transition:.4s var(--ease)}
+.chip:hover{background:var(--ink);color:var(--bone);border-color:var(--ink)}
+
+/* =========================================================
+   TESTIMONIALS
+   ========================================================= */
+.quotes .head{margin-bottom:clamp(3rem,6vw,4.5rem)}
+.quotes-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:1.5rem}
+.quote{background:var(--cream);border:1px solid var(--line);border-radius:var(--r);padding:clamp(1.8rem,3vw,2.4rem);display:flex;flex-direction:column;gap:1.4rem}
+.quote .mark{font-family:var(--serif);font-size:3.4rem;line-height:.4;color:var(--rose);height:1.3rem}
+.quote p{font-family:var(--serif);font-size:clamp(1.15rem,1.7vw,1.42rem);font-weight:300;line-height:1.4;letter-spacing:-.01em;flex:1}
+.quote cite{font-family:var(--mono);font-size:.74rem;letter-spacing:.1em;text-transform:uppercase;color:var(--ink-soft);font-style:normal}
+.quote cite b{color:var(--clay);font-weight:700}
+
+/* =========================================================
+   BOOKING (dark)
+   ========================================================= */
+.book{position:relative;overflow:hidden}
+.book::before{ /* CSS golden-hour echo over dusk */
+  content:"";position:absolute;inset:0;z-index:0;pointer-events:none;opacity:.9;
+  background:
+    radial-gradient(60% 60% at 80% 12%, rgba(210,154,51,.42), transparent 62%),
+    radial-gradient(55% 55% at 12% 88%, rgba(232,119,90,.40), transparent 60%),
+    radial-gradient(70% 70% at 50% 50%, rgba(197,83,46,.18), transparent 70%);
+}
+.book .wrap{position:relative;z-index:1;display:grid;grid-template-columns:1fr 1fr;gap:clamp(2.5rem,5vw,5rem);align-items:center}
+.book h2{margin:1.1rem 0 1.4rem}
+.book h2 em{color:var(--gold)}
+.book .call{margin-top:2rem;font-family:var(--mono);font-size:.82rem;letter-spacing:.06em;color:rgba(246,239,228,.7)}
+.book .call a{color:var(--gold);border-bottom:1px solid rgba(210,154,51,.5)}
+
+.form{background:rgba(251,246,238,.06);border:1px solid rgba(246,239,228,.16);border-radius:var(--r);padding:clamp(1.6rem,3vw,2.4rem);backdrop-filter:blur(8px);-webkit-backdrop-filter:blur(8px)}
+.field{margin-bottom:1.05rem}
+.field.row{display:grid;grid-template-columns:1fr 1fr;gap:1rem;margin-bottom:1.05rem}
+.field label{display:block;font-family:var(--mono);font-size:.68rem;letter-spacing:.16em;text-transform:uppercase;color:rgba(246,239,228,.6);margin-bottom:.5rem}
+.field input,.field select{
+  width:100%;padding:.95rem 1rem;border-radius:12px;
+  background:rgba(28,16,25,.45);border:1px solid rgba(246,239,228,.2);
+  color:var(--bone);font-family:var(--sans);font-size:1rem;transition:border-color .3s, background .3s;
+}
+.field input::placeholder{color:rgba(246,239,228,.4)}
+.field input:focus,.field select:focus{outline:none;border-color:var(--gold);background:rgba(28,16,25,.7)}
+.field select{appearance:none;background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='8' viewBox='0 0 12 8'%3E%3Cpath d='M1 1l5 5 5-5' stroke='%23D29A33' stroke-width='1.6' fill='none'/%3E%3C/svg%3E");background-repeat:no-repeat;background-position:right 1rem center}
+.form .btn{width:100%;justify-content:center;margin-top:.4rem}
+.form-note{font-size:.78rem;color:rgba(246,239,228,.5);margin-top:1rem;text-align:center}
+.form-done{text-align:center;display:none;padding:1rem 0}
+.form-done.show{display:block;animation:fade .6s var(--ease)}
+@keyframes fade{from{opacity:0;transform:translateY(10px)}to{opacity:1;transform:none}}
+.form-done .check{width:64px;height:64px;border-radius:50%;border:1.5px solid var(--gold);display:grid;place-items:center;margin:0 auto 1.4rem}
+.form-done .check svg{width:30px;height:30px;stroke:var(--gold);fill:none;stroke-width:1.6}
+.form-done h3{font-family:var(--serif);font-weight:300;font-size:1.9rem;margin-bottom:.7rem}
+.form-done p{color:rgba(246,239,228,.7);max-width:34ch;margin:0 auto}
+
+/* =========================================================
+   FOOTER
+   ========================================================= */
+.footer{background:var(--dusk);color:var(--bone);padding:clamp(4rem,8vw,6rem) 0 2rem;border-top:1px solid rgba(246,239,228,.1)}
+.footer .top{display:grid;grid-template-columns:1.4fr 1fr 1fr 1fr;gap:clamp(2rem,4vw,3rem);padding-bottom:clamp(3rem,6vw,4.5rem);border-bottom:1px solid rgba(246,239,228,.12)}
+.footer .brand b{color:var(--bone);font-size:2rem}
+.footer .brand i{color:var(--gold)}
+.foot-tag{font-family:var(--serif);font-style:italic;font-weight:300;font-size:1.5rem;margin-top:1.2rem;max-width:18ch;line-height:1.25;color:rgba(246,239,228,.92)}
+.fcol h4{font-family:var(--mono);font-size:.72rem;letter-spacing:.18em;text-transform:uppercase;color:var(--gold);margin-bottom:1.3rem;font-weight:400}
+.fcol a,.fcol p{display:block;font-size:.96rem;color:rgba(246,239,228,.74);margin-bottom:.7rem;transition:color .3s}
+.fcol a:hover{color:var(--bone)}
+.footer .bottom{display:flex;flex-wrap:wrap;gap:1rem;justify-content:space-between;padding-top:2rem;font-family:var(--mono);font-size:.72rem;letter-spacing:.08em;color:rgba(246,239,228,.5);text-transform:uppercase}
+
+/* =========================================================
+   CUSTOM CURSOR (desktop / fine pointer only)
+   ========================================================= */
+.cursor-dot,.cursor-ring{position:fixed;top:0;left:0;border-radius:50%;pointer-events:none;z-index:999;mix-blend-mode:difference;opacity:0}
+.cursor-dot{width:7px;height:7px;background:var(--bone);transform:translate(-50%,-50%)}
+.cursor-ring{width:40px;height:40px;border:1.4px solid var(--bone);transform:translate(-50%,-50%);transition:width .35s var(--ease),height .35s var(--ease),background .35s var(--ease)}
+.cursor-ring.grow{width:62px;height:62px;background:rgba(246,239,228,.12)}
+
+/* film grain overlay */
+.grain{position:fixed;inset:-50%;z-index:200;pointer-events:none;opacity:.5;mix-blend-mode:overlay;
+  background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='160' height='160'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='.9' numOctaves='2' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)' opacity='.5'/%3E%3C/svg%3E");
+}
+
+/* reveal helper */
+[data-reveal]{opacity:0;transform:translateY(34px)}
+.reveal-ready [data-reveal]{will-change:transform,opacity}
+
+/* =========================================================
+   RESPONSIVE
+   ========================================================= */
+@media (max-width:1024px){
+  .svc-grid{grid-template-columns:repeat(2,1fr)}
+  .steps-grid{grid-template-columns:repeat(2,1fr);gap:2.5rem}
+  .steps-line{display:none}
+  .quotes-grid{grid-template-columns:1fr}
+  .footer .top{grid-template-columns:1fr 1fr}
+}
+@media (max-width:860px){
+  .nav-links,.nav-cta .btn{display:none}
+  .nav-toggle{display:block}
+  .manifesto-grid{grid-template-columns:1fr;gap:2.5rem}
+  .svc-head{grid-template-columns:1fr;gap:1.4rem}
+  .svc-head .lede{justify-self:start}
+  .studio .wrap{grid-template-columns:1fr}
+  .studio-copy{order:2}
+  .area .wrap{grid-template-columns:1fr}
+  .book .wrap{grid-template-columns:1fr}
+  .quotes-grid{grid-template-columns:1fr}
+}
+@media (max-width:560px){
+  .svc-grid{grid-template-columns:1fr}
+  .steps-grid{grid-template-columns:1fr;gap:1.6rem}
+  .step{grid-template-columns:auto 1fr;align-items:center;gap:1.2rem}
+  .step .num{width:58px;height:58px;font-size:1.3rem}
+  .step p{max-width:none}
+  .footer .top{grid-template-columns:1fr}
+  .field.row{grid-template-columns:1fr}
+  .hero-van{display:none}
+  .scroll-cue{display:none}
+}
+
+@media (prefers-reduced-motion:reduce){
+  html{scroll-behavior:auto}
+  *,*::after,*::before{animation-duration:.001ms!important;animation-iteration-count:1!important;transition-duration:.001ms!important}
+  [data-reveal]{opacity:1!important;transform:none!important}
+  .line-mask>span{transform:none!important}
+}
+</style>
+</head>
+<body>
+
+<div class="grain" aria-hidden="true"></div>
+
+<!-- PRELOADER -->
+<div id="preloader" aria-hidden="true">
+  <div class="pl-mark"><span>Sweet&rsquo;s</span></div>
+  <div class="pl-bar"></div>
+</div>
+
+<!-- CUSTOM CURSOR -->
+<div class="cursor-ring" aria-hidden="true"></div>
+<div class="cursor-dot" aria-hidden="true"></div>
+
+<!-- NAV -->
+<header class="nav" id="nav">
+  <a class="brand" href="#top" aria-label="Sweet's Mobile Salon home">
+    <span class="dot"></span><b>Sweet&rsquo;s</b><i>Mobile&nbsp;Salon</i>
+  </a>
+  <nav class="nav-links" aria-label="Primary">
+    <a href="#services">Services</a>
+    <a href="#studio">The Van</a>
+    <a href="#steps">How it works</a>
+    <a href="#area">Where we go</a>
+  </nav>
+  <div class="nav-cta">
+    <a href="#book" class="btn btn--primary">Book a visit <span class="arrow">→</span></a>
+  </div>
+  <button class="nav-toggle" id="navToggle" aria-label="Open menu" aria-expanded="false" aria-controls="mobileMenu">
+    <span></span><span></span>
+  </button>
+</header>
+
+<!-- MOBILE MENU -->
+<div class="mobile-menu" id="mobileMenu">
+  <a href="#services"><small>01</small>Services</a>
+  <a href="#studio"><small>02</small>The Van</a>
+  <a href="#steps"><small>03</small>How it works</a>
+  <a href="#area"><small>04</small>Where we go</a>
+  <a href="#book"><small>05</small>Book a visit</a>
+  <div class="mm-foot">Greater Phoenix · 7 days a week</div>
+</div>
+
+<main id="top">
+
+  <!-- HERO -->
+  <section class="hero" id="hero">
+    <canvas id="gl" aria-hidden="true"></canvas>
+
+    <!-- floating hand-drawn van -->
+    <svg class="hero-van" viewBox="0 0 360 220" fill="none" aria-hidden="true">
+      <ellipse cx="180" cy="200" rx="150" ry="12" fill="#2A1A2B" opacity=".08"/>
+      <circle cx="300" cy="44" r="30" fill="#D29A33" opacity=".9"/>
+      <g stroke="#C5532E" stroke-width="2" stroke-linecap="round" opacity=".55">
+        <path d="M300 4v-2M300 90v2M256 44h-2M348 44h-2M270 14l-1.4-1.4M331 74l1.4 1.4M270 74l-1.4 1.4M331 14l1.4-1.4"/>
+      </g>
+      <path d="M40 90h150c8 0 12 4 14 10l16 30h40c14 0 26 12 26 28v22H40z" fill="#FBF6EE" stroke="#2A1A2B" stroke-width="3"/>
+      <path d="M40 90h150c8 0 12 4 14 10l16 30H40z" fill="#E7B4A4" stroke="#2A1A2B" stroke-width="3"/>
+      <rect x="56" y="100" width="44" height="26" rx="4" fill="#1C1019" opacity=".82"/>
+      <rect x="110" y="100" width="44" height="26" rx="4" fill="#1C1019" opacity=".82"/>
+      <path d="M205 100l12 24h-30v-24z" fill="#1C1019" opacity=".82"/>
+      <rect x="40" y="150" width="246" height="10" fill="#C5532E"/>
+      <path d="M250 132h30c8 0 12 6 12 14h-42z" fill="#D29A33"/>
+      <circle cx="92" cy="186" r="20" fill="#2A1A2B"/><circle cx="92" cy="186" r="8" fill="#FBF6EE"/>
+      <circle cx="232" cy="186" r="20" fill="#2A1A2B"/><circle cx="232" cy="186" r="8" fill="#FBF6EE"/>
+      <text x="92" y="146" font-family="Fraunces, serif" font-style="italic" font-size="15" fill="#FBF6EE" text-anchor="middle">Sweet&rsquo;s</text>
+    </svg>
+
+    <div class="wrap">
+      <div class="hero-top">
+        <span class="eyebrow" data-fade>Phoenix · Arizona — Mobile Hair Studio</span>
+      </div>
+
+      <h1 class="hero-headline" aria-label="We bring the whole salon to your door.">
+        <span class="line-mask"><span>We bring the</span></span>
+        <span class="line-mask"><span>whole <em>salon</em></span></span>
+        <span class="line-mask"><span>to your door.</span></span>
+      </h1>
+
+      <p class="hero-sub" data-fade>A fully-appointed studio on wheels — cuts, color, perms, and treatments, done beautifully right in your driveway, anywhere in Greater Phoenix.</p>
+
+      <div class="hero-actions" data-fade>
+        <a href="#book" class="btn btn--primary" data-magnetic>Book a visit <span class="arrow">→</span></a>
+        <a href="#services" class="btn btn--ghost" data-magnetic>See the menu</a>
+      </div>
+
+      <div class="hero-meta" data-fade>
+        <span>Licensed &amp; insured</span>
+        <span>Open 7 days a week</span>
+        <span>We come to you</span>
+      </div>
+    </div>
+
+    <div class="scroll-cue" aria-hidden="true">Scroll<div class="rail"></div></div>
+  </section>
+
+  <!-- MARQUEE -->
+  <div class="marquee" aria-hidden="true">
+    <div class="marquee-track" id="marquee">
+      <span>Cuts</span><span>Color</span><span>Balayage</span><span>Perms &amp; Texture</span><span>Glosses</span><span>Blowouts</span><span>Bridal</span><span>Treatments</span><span>Kids&rsquo; Cuts</span>
+    </div>
+  </div>
+
+  <!-- MANIFESTO -->
+  <section class="section manifesto">
+    <div class="wrap">
+      <p class="manifesto-big" id="manifesto">No parking lots. No waiting rooms. No rescheduling around rush hour. Just a calm, private, professional <em>salon</em> — that comes to you.</p>
+      <div class="manifesto-grid">
+        <p data-reveal>Sweet&rsquo;s was built for real Phoenix life. Our van carries everything a brick-and-mortar studio does, then parks it wherever you are — your driveway, your patio, your office lot on a lunch break.</p>
+        <div class="stats" data-reveal>
+          <div class="stat"><span class="n" data-count="0">0</span><span class="l">minutes commuting</span></div>
+          <div class="stat"><span class="n" data-count="1">1</span><span class="l">client at a time</span></div>
+          <div class="stat"><span class="n" data-count="7">7</span><span class="l">days a week</span></div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- SERVICES -->
+  <section class="section section--alt services" id="services">
+    <div class="wrap">
+      <div class="svc-head">
+        <div>
+          <span class="eyebrow" data-reveal>The Menu</span>
+          <h2 data-reveal style="margin-top:1.2rem">Everything your hair<br>needs, <em>nothing</em> it doesn&rsquo;t.</h2>
+        </div>
+        <p class="lede" data-reveal>A full-service salon experience, delivered. Tell us the look — we bring the tools, the products, and the expertise.</p>
+      </div>
+
+      <div class="svc-grid" id="svcGrid">
+        <article class="svc-card" data-reveal>
+          <div class="svc-ico"><svg viewBox="0 0 24 24"><circle cx="6" cy="6" r="3"/><circle cx="6" cy="18" r="3"/><path d="M8.5 7.5L20 18M8.5 16.5L20 6"/></svg></div>
+          <h3>Cuts &amp; Styling</h3>
+          <p>Precision cuts, blowouts, and finishing for every length, texture, and shape.</p>
+          <span class="svc-go">Add to visit →</span>
+        </article>
+
+        <article class="svc-card" data-reveal>
+          <div class="svc-ico"><svg viewBox="0 0 24 24"><path d="M12 3c3 4 5 6.5 5 9a5 5 0 01-10 0c0-2.5 2-5 5-9z"/><path d="M9.5 13.5a2.5 2.5 0 002.5 2.5"/></svg></div>
+          <h3>Color &amp; Balayage</h3>
+          <p>Roots, all-over color, dimensional balayage, gloss, and custom toning.</p>
+          <span class="svc-go">Add to visit →</span>
+        </article>
+
+        <article class="svc-card" data-reveal>
+          <div class="svc-ico"><svg viewBox="0 0 24 24"><path d="M7 4c0 3 10 3 10 6s-10 3-10 6 10 3 10 4" stroke-linecap="round"/></svg></div>
+          <h3>Perms &amp; Texture</h3>
+          <p>Modern perms, body waves, relaxing, and texture services — done with care.</p>
+          <span class="svc-go">Add to visit →</span>
+        </article>
+
+        <article class="svc-card" data-reveal>
+          <div class="svc-ico"><svg viewBox="0 0 24 24"><path d="M12 21c-4-2-7-5-7-9a7 7 0 0114 0c0 4-3 7-7 9z"/><path d="M12 6v9M8.5 9.5h7" stroke-linecap="round"/></svg></div>
+          <h3>Treatments &amp; Repair</h3>
+          <p>Deep conditioning, bond-building, scalp care, and shine-restoring glosses.</p>
+          <span class="svc-go">Add to visit →</span>
+        </article>
+
+        <article class="svc-card" data-reveal>
+          <div class="svc-ico"><svg viewBox="0 0 24 24"><path d="M12 3l2 5 5 1-3.5 3.5L16.5 18 12 15l-4.5 3 1-5.5L5 9l5-1z"/></svg></div>
+          <h3>Bridal &amp; Events</h3>
+          <p>On-location styling for weddings, photos, and big nights — for you and your whole party.</p>
+          <span class="svc-go">Add to visit →</span>
+        </article>
+
+        <article class="svc-card" data-reveal>
+          <div class="svc-ico"><svg viewBox="0 0 24 24"><circle cx="12" cy="9" r="5"/><path d="M8.5 9h.01M15.5 9h.01M9.5 11.5a3 3 0 005 0" stroke-linecap="round"/><path d="M5 21c1.5-3 4-4.5 7-4.5s5.5 1.5 7 4.5"/></svg></div>
+          <h3>Little Ones</h3>
+          <p>Patient, friendly cuts for kids — right at the kitchen table, no meltdowns.</p>
+          <span class="svc-go">Add to visit →</span>
+        </article>
+      </div>
+    </div>
+  </section>
+
+  <!-- THE VAN / STUDIO -->
+  <section class="section studio" id="studio">
+    <div class="wrap">
+      <div class="studio-art" data-reveal>
+        <svg viewBox="0 0 600 460" fill="none" role="img" aria-label="Illustration of Sweet's fully-equipped salon van parked in the desert at golden hour">
+          <defs>
+            <linearGradient id="sky" x1="0" y1="0" x2="0" y2="1">
+              <stop offset="0" stop-color="#F4C56B"/><stop offset=".5" stop-color="#ECA078"/><stop offset="1" stop-color="#E7B4A4"/>
+            </linearGradient>
+            <linearGradient id="body" x1="0" y1="0" x2="0" y2="1">
+              <stop offset="0" stop-color="#FBF6EE"/><stop offset="1" stop-color="#F0E3D2"/>
+            </linearGradient>
+          </defs>
+          <rect width="600" height="460" rx="18" fill="url(#sky)"/>
+          <circle cx="430" cy="120" r="64" fill="#F6D98C" opacity=".85"/>
+          <circle cx="430" cy="120" r="64" fill="none" stroke="#FBF6EE" stroke-width="2" opacity=".5"/>
+          <!-- saguaros -->
+          <g fill="#7C5A3A" opacity=".5">
+            <path d="M70 320v-90c0-8 12-8 12 0v90zM76 270c0-22 22-22 22 0v18c0 6-10 6-10 0v-14c0-6-12-6-12 4M76 250c0-20-20-20-20 0v22c0 6 10 6 10 0v-18c0-6 10-6 10-4"/>
+            <path d="M540 330v-70c0-7 10-7 10 0v70zM545 290c0-18 18-18 18 0v12c0 5-8 5-8 0v-10c0-5-10-5-10 3"/>
+          </g>
+          <!-- ground -->
+          <path d="M0 340h600v120H0z" fill="#D8A26E" opacity=".55"/>
+          <ellipse cx="300" cy="392" rx="220" ry="20" fill="#5A3B26" opacity=".22"/>
+
+          <!-- VAN -->
+          <g>
+            <path d="M120 230h250c14 0 22 7 26 18l26 52h66c24 0 42 20 42 46v34H120z" fill="url(#body)" stroke="#2A1A2B" stroke-width="4"/>
+            <path d="M120 230h250c14 0 22 7 26 18l26 52H120z" fill="#E7B4A4" stroke="#2A1A2B" stroke-width="4"/>
+            <!-- windows -->
+            <rect x="146" y="248" width="70" height="42" rx="6" fill="#23323A"/>
+            <rect x="232" y="248" width="70" height="42" rx="6" fill="#23323A"/>
+            <rect x="318" y="248" width="56" height="42" rx="6" fill="#23323A"/>
+            <path d="M398 252l24 48h-50v-48z" fill="#23323A"/>
+            <!-- stripe + name -->
+            <rect x="120" y="312" width="372" height="20" fill="#C5532E"/>
+            <text x="230" y="300" font-family="Fraunces, serif" font-style="italic" font-size="30" fill="#2A1A2B" text-anchor="middle">Sweet&rsquo;s</text>
+            <text x="356" y="327" font-family="Space Mono, monospace" font-size="11" letter-spacing="3" fill="#FBF6EE">MOBILE SALON</text>
+            <!-- awning -->
+            <path d="M430 282h66c14 0 22 10 22 24h-88z" fill="#D29A33"/>
+            <path d="M430 282h66c14 0 22 10 22 24" stroke="#2A1A2B" stroke-width="3" fill="none"/>
+            <!-- wheels -->
+            <circle cx="196" cy="386" r="30" fill="#2A1A2B"/><circle cx="196" cy="386" r="12" fill="#FBF6EE"/>
+            <circle cx="440" cy="386" r="30" fill="#2A1A2B"/><circle cx="440" cy="386" r="12" fill="#FBF6EE"/>
+          </g>
+
+          <!-- numbered hotspots -->
+          <g class="hot" font-family="Space Mono, monospace" font-size="13" font-weight="700" text-anchor="middle">
+            <g data-hot="1"><circle cx="181" cy="269" r="13" fill="#2A1A2B"/><text x="181" y="274" fill="#FBF6EE">1</text></g>
+            <g data-hot="2"><circle cx="267" cy="269" r="13" fill="#2A1A2B"/><text x="267" y="274" fill="#FBF6EE">2</text></g>
+            <g data-hot="3"><circle cx="346" cy="269" r="13" fill="#2A1A2B"/><text x="346" y="274" fill="#FBF6EE">3</text></g>
+            <g data-hot="4"><circle cx="474" cy="296" r="13" fill="#2A1A2B"/><text x="474" y="301" fill="#FBF6EE">4</text></g>
+            <g data-hot="5"><circle cx="305" cy="322" r="13" fill="#FBF6EE"/><text x="305" y="327" fill="#2A1A2B">5</text></g>
+            <g data-hot="6"><circle cx="520" cy="330" r="13" fill="#2A1A2B"/><text x="520" y="335" fill="#FBF6EE">6</text></g>
+          </g>
+        </svg>
+      </div>
+
+      <div class="studio-copy">
+        <span class="eyebrow" data-reveal>The Studio</span>
+        <h2 data-reveal>A real salon,<br>on <em>four wheels.</em></h2>
+        <p class="lede" data-reveal>Step inside and you&rsquo;d never know you were parked in your own driveway.</p>
+        <ul class="feat" id="featList">
+          <li data-reveal data-feat="1"><span class="k">1</span><div><div class="t">Pro wash basin</div><div class="d">Warm-water shampoo station with a reclining cradle.</div></div></li>
+          <li data-reveal data-feat="2"><span class="k">2</span><div><div class="t">Hydraulic salon chair</div><div class="d">The real thing — it raises, reclines, and spins.</div></div></li>
+          <li data-reveal data-feat="3"><span class="k">3</span><div><div class="t">Daylight-balanced lighting</div><div class="d">Color-accurate, dimmable light so your color reads true.</div></div></li>
+          <li data-reveal data-feat="4"><span class="k">4</span><div><div class="t">Climate controlled</div><div class="d">Cool in July, cozy in January — always comfortable.</div></div></li>
+          <li data-reveal data-feat="5"><span class="k">5</span><div><div class="t">Clean by design</div><div class="d">Hospital-grade sanitation between every single client.</div></div></li>
+          <li data-reveal data-feat="6"><span class="k">6</span><div><div class="t">Power &amp; water onboard</div><div class="d">Fully self-sufficient — we don&rsquo;t need a thing from you.</div></div></li>
+        </ul>
+      </div>
+    </div>
+  </section>
+
+  <!-- STEPS -->
+  <section class="section section--alt steps" id="steps">
+    <div class="wrap">
+      <div class="head">
+        <span class="eyebrow" data-reveal>How it works</span>
+        <h2 data-reveal>Your salon day, in four steps.</h2>
+      </div>
+      <div class="steps-grid">
+        <div class="steps-line"><i id="stepsProgress"></i></div>
+        <div class="step" data-reveal><div class="num">01</div><h3>Book online</h3><p>Pick your service, date, and address in a couple of taps.</p></div>
+        <div class="step" data-reveal><div class="num">02</div><h3>We roll up</h3><p>Sweet&rsquo;s parks out front and sets up in minutes.</p></div>
+        <div class="step" data-reveal><div class="num">03</div><h3>Sink in</h3><p>Get comfortable while we do your thing. Coffee optional.</p></div>
+        <div class="step" data-reveal><div class="num">04</div><h3>The reveal</h3><p>Fresh hair, zero commute. Just walk back inside.</p></div>
+      </div>
+    </div>
+  </section>
+
+  <!-- SERVICE AREA -->
+  <section class="section area" id="area">
+    <div class="wrap">
+      <div class="area-copy">
+        <span class="eyebrow" data-reveal>Where we go</span>
+        <h2 data-reveal>Serving the<br>whole <em>Valley.</em></h2>
+        <p class="lede" data-reveal>From Arcadia to Anthem, we cover the greater Phoenix metro. Not sure if we reach you? Just ask when you book.</p>
+        <div class="hours" data-reveal><span class="pulse"></span>Mon–Sun · 8am – 7pm</div>
+      </div>
+      <div class="chips" data-reveal>
+        <span class="chip">Phoenix</span><span class="chip">Scottsdale</span><span class="chip">Paradise Valley</span>
+        <span class="chip">Tempe</span><span class="chip">Mesa</span><span class="chip">Chandler</span>
+        <span class="chip">Gilbert</span><span class="chip">Glendale</span><span class="chip">Peoria</span>
+        <span class="chip">Cave Creek</span><span class="chip">Carefree</span><span class="chip">Fountain Hills</span>
+        <span class="chip">Ahwatukee</span><span class="chip">Arcadia</span><span class="chip">Anthem</span>
+      </div>
+    </div>
+  </section>
+
+  <!-- TESTIMONIALS -->
+  <section class="section section--alt quotes">
+    <div class="wrap">
+      <div class="head">
+        <span class="eyebrow" data-reveal>Kind words</span>
+        <h2 data-reveal style="margin-top:1.1rem">Loved across the Valley.</h2>
+      </div>
+      <div class="quotes-grid">
+        <figure class="quote" data-reveal>
+          <div class="mark">&ldquo;</div>
+          <p>Booked it for my mom&rsquo;s 70th and the whole family got blowouts in the driveway. Unreal.</p>
+          <cite><b>Dana</b> · Arcadia</cite>
+        </figure>
+        <figure class="quote" data-reveal>
+          <div class="mark">&ldquo;</div>
+          <p>My color came out better than any salon I&rsquo;ve sat in — and I never left the house.</p>
+          <cite><b>Priya</b> · Gilbert</cite>
+        </figure>
+        <figure class="quote" data-reveal>
+          <div class="mark">&ldquo;</div>
+          <p>Two kids, two haircuts, zero meltdowns. I&rsquo;m never going back to the mall.</p>
+          <cite><b>Marcus</b> · Chandler</cite>
+        </figure>
+      </div>
+    </div>
+  </section>
+
+  <!-- BOOKING -->
+  <section class="section section--dark book" id="book">
+    <div class="wrap">
+      <div class="book-copy">
+        <span class="eyebrow" data-reveal>Book a visit</span>
+        <h2 data-reveal>Ready for your<br><em>home salon day?</em></h2>
+        <p class="lede" data-reveal>Tell us a little about what you&rsquo;re after and we&rsquo;ll text you back to lock it in. No deposits, no hassle.</p>
+        <p class="call" data-reveal>Prefer to talk? Call <a href="tel:+16025550199">(602) 555-0199</a></p>
+      </div>
+
+      <div class="form" data-reveal>
+        <form id="bookForm" novalidate>
+          <div class="field">
+            <label for="f-name">Your name</label>
+            <input id="f-name" name="name" type="text" placeholder="First &amp; last" autocomplete="name" required />
+          </div>
+          <div class="field row">
+            <div>
+              <label for="f-phone">Mobile number</label>
+              <input id="f-phone" name="phone" type="tel" placeholder="(602) 000-0000" autocomplete="tel" required />
+            </div>
+            <div>
+              <label for="f-area">Neighborhood</label>
+              <input id="f-area" name="area" type="text" placeholder="e.g. Scottsdale" autocomplete="address-level2" />
+            </div>
+          </div>
+          <div class="field row">
+            <div>
+              <label for="f-service">Service</label>
+              <select id="f-service" name="service">
+                <option>Cut &amp; style</option>
+                <option>Color or balayage</option>
+                <option>Perm or texture</option>
+                <option>Treatment</option>
+                <option>Bridal or event</option>
+                <option>Kids&rsquo; cut</option>
+                <option>Not sure yet</option>
+              </select>
+            </div>
+            <div>
+              <label for="f-date">Preferred date</label>
+              <input id="f-date" name="date" type="date" />
+            </div>
+          </div>
+          <button type="submit" class="btn btn--light" data-magnetic>Request a visit <span class="arrow">→</span></button>
+          <p class="form-note">We&rsquo;ll confirm by text within the hour during business hours.</p>
+        </form>
+
+        <div class="form-done" id="formDone" role="status" aria-live="polite">
+          <div class="check"><svg viewBox="0 0 24 24"><path d="M4 12.5l5 5 11-12" stroke-linecap="round" stroke-linejoin="round"/></svg></div>
+          <h3 id="doneName">Thanks!</h3>
+          <p id="doneMsg">We&rsquo;ll text you shortly to confirm your visit.</p>
+        </div>
+      </div>
+    </div>
+  </section>
+</main>
+
+<!-- FOOTER -->
+<footer class="footer">
+  <div class="wrap">
+    <div class="top">
+      <div>
+        <div class="brand"><span class="dot"></span><b>Sweet&rsquo;s</b><i>Mobile&nbsp;Salon</i></div>
+        <p class="foot-tag">Great hair, parked out front.</p>
+      </div>
+      <div class="fcol">
+        <h4>Explore</h4>
+        <a href="#services">Services</a>
+        <a href="#studio">The Van</a>
+        <a href="#steps">How it works</a>
+        <a href="#area">Where we go</a>
+      </div>
+      <div class="fcol">
+        <h4>Visit</h4>
+        <a href="tel:+16025550199">(602) 555-0199</a>
+        <a href="mailto:hello@sweetsmobilesalon.com">hello@sweetsmobilesalon.com</a>
+        <p>Mon–Sun · 8am – 7pm</p>
+        <p>Greater Phoenix, AZ</p>
+      </div>
+      <div class="fcol">
+        <h4>Follow</h4>
+        <a href="#" aria-label="Instagram">Instagram</a>
+        <a href="#" aria-label="TikTok">TikTok</a>
+        <a href="#" aria-label="Facebook">Facebook</a>
+      </div>
+    </div>
+    <div class="bottom">
+      <span>© 2026 Sweet&rsquo;s Mobile Salon · Licensed &amp; insured</span>
+      <span>Made with care in the desert ✦</span>
+    </div>
+  </div>
+</footer>
+
+<script>
+/* =========================================================
+   SWEET'S — interactions
+   ========================================================= */
+(function(){
+  "use strict";
+  const reduce = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+  const fine   = window.matchMedia("(pointer: fine)").matches;
+  const hasGSAP = !!window.gsap;
+  if (hasGSAP && window.ScrollTrigger) gsap.registerPlugin(ScrollTrigger);
+
+  /* ---------- PRELOADER + hero intro ---------- */
+  function intro(){
+    const pl = document.getElementById("preloader");
+    const heroLines = gsap.utils.toArray(".line-mask > span");
+    const fades = gsap.utils.toArray("[data-fade]");
+
+    if (!hasGSAP){ if(pl) pl.style.display="none"; return; }
+
+    if (reduce){
+      gsap.set([heroLines, fades], {clearProps:"all", y:0, opacity:1});
+      if(pl) pl.style.display="none";
+      return;
+    }
+
+    const tl = gsap.timeline();
+    tl.to(".pl-mark span", {y:0, duration:.9, ease:"expo.out", delay:.15})
+      .to(".pl-bar", {width:"100%", duration:.9, ease:"power2.inOut"}, "-=.7")
+      .to("#preloader", {yPercent:-100, duration:.9, ease:"expo.inOut"}, "+=.15")
+      .from(".nav", {y:-30, opacity:0, duration:.7, ease:"power3.out"}, "-=.5")
+      .to(heroLines, {y:0, duration:1.05, ease:"expo.out", stagger:.09}, "-=.55")
+      .to(fades, {y:0, opacity:1, duration:.8, ease:"power3.out", stagger:.08}, "-=.7")
+      .from(".hero-van", {opacity:0, y:40, duration:1.1, ease:"power3.out"}, "-=.9")
+      .from(".scroll-cue", {opacity:0, duration:.6}, "-=.4");
+    gsap.set("[data-fade]", {y:24, opacity:0});
+  }
+  // pre-state for fades so they don't flash
+  if (hasGSAP && !reduce){ gsap.set("[data-fade]", {y:24, opacity:0}); }
+
+  /* ---------- scroll reveals ---------- */
+  function reveals(){
+    if (!hasGSAP || reduce) return;
+    document.body.classList.add("reveal-ready");
+    gsap.utils.toArray("[data-reveal]").forEach((el)=>{
+      gsap.to(el, {
+        y:0, opacity:1, duration:1, ease:"power3.out",
+        scrollTrigger:{ trigger:el, start:"top 86%" }
+      });
+    });
+
+    // services stagger within row
+    ScrollTrigger.batch("#svcGrid .svc-card", {
+      start:"top 88%",
+      onEnter: b => gsap.to(b, {y:0, opacity:1, duration:.9, ease:"power3.out", stagger:.08, overwrite:true})
+    });
+  }
+
+  /* ---------- manifesto word reveal ---------- */
+  function manifesto(){
+    const el = document.getElementById("manifesto");
+    if (!el) return;
+    const html = el.innerHTML;
+    // wrap words (preserve <em>)
+    el.innerHTML = html.replace(/(<em>|<\/em>)|([^\s<]+)/g, (m, tag, word)=>{
+      if (tag) return tag;
+      return '<span class="w">'+word+'</span>';
+    });
+    if (!hasGSAP || reduce){ gsap.set?.(".manifesto-big .w", {color:"var(--ink)"}); el.querySelectorAll(".w").forEach(w=>w.style.color="var(--ink)"); return; }
+    gsap.to(".manifesto-big .w", {
+      color:"#2A1A2B", stagger:.04, ease:"none",
+      scrollTrigger:{ trigger:el, start:"top 80%", end:"bottom 60%", scrub:true }
+    });
+  }
+
+  /* ---------- count up ---------- */
+  function counts(){
+    if (!hasGSAP || reduce) return;
+    gsap.utils.toArray("[data-count]").forEach(el=>{
+      const end = +el.getAttribute("data-count");
+      const obj = {v:0};
+      gsap.to(obj, {
+        v:end, duration:1.4, ease:"power2.out",
+        scrollTrigger:{ trigger:el, start:"top 88%" },
+        onUpdate:()=> el.textContent = Math.round(obj.v)
+      });
+    });
+  }
+
+  /* ---------- steps progress line ---------- */
+  function steps(){
+    if (!hasGSAP || reduce) return;
+    const line = document.getElementById("stepsProgress");
+    if (!line) return;
+    gsap.to(line, {
+      scaleX:1, ease:"none",
+      scrollTrigger:{ trigger:".steps-grid", start:"top 70%", end:"bottom 75%", scrub:.6 }
+    });
+  }
+
+  /* ---------- van hotspot pulse synced to feature hover/reveal ---------- */
+  function vanHotspots(){
+    const feats = document.querySelectorAll("[data-feat]");
+    feats.forEach(li=>{
+      const id = li.getAttribute("data-feat");
+      const hot = document.querySelector('[data-hot="'+id+'"]');
+      const activate = (on)=>{
+        if(!hot) return;
+        hot.style.transition="transform .4s cubic-bezier(.16,1,.3,1)";
+        hot.style.transformBox="fill-box";
+        hot.style.transformOrigin="center";
+        hot.style.transform = on ? "scale(1.4)" : "scale(1)";
+        li.style.color = on ? "var(--clay)" : "";
+      };
+      li.addEventListener("mouseenter", ()=>activate(true));
+      li.addEventListener("mouseleave", ()=>activate(false));
+    });
+    if (hasGSAP && !reduce){
+      gsap.from(".hot g", {
+        opacity:0, scale:0, transformOrigin:"center", transformBox:"fill-box",
+        duration:.5, ease:"back.out(2)", stagger:.08,
+        scrollTrigger:{ trigger:".studio-art", start:"top 70%" }
+      });
+    }
+  }
+
+  /* ---------- marquee loop ---------- */
+  function marquee(){
+    const track = document.getElementById("marquee");
+    if (!track) return;
+    track.innerHTML += track.innerHTML; // duplicate for seamless loop
+    if (!hasGSAP || reduce) return;
+    gsap.to(track, { xPercent:-50, repeat:-1, duration:24, ease:"none" });
+  }
+
+  /* ---------- parallax bits ---------- */
+  function parallax(){
+    if (!hasGSAP || reduce) return;
+    gsap.to(".hero-van", {
+      y:120, ease:"none",
+      scrollTrigger:{ trigger:".hero", start:"top top", end:"bottom top", scrub:true }
+    });
+  }
+
+  /* ---------- nav scroll state + mobile menu ---------- */
+  function nav(){
+    const navEl = document.getElementById("nav");
+    const onScroll = ()=> navEl.classList.toggle("scrolled", window.scrollY > 40);
+    onScroll(); window.addEventListener("scroll", onScroll, {passive:true});
+
+    const toggle = document.getElementById("navToggle");
+    const menu = document.getElementById("mobileMenu");
+    const setOpen = (open)=>{
+      menu.classList.toggle("open", open);
+      document.body.classList.toggle("is-locked", open);
+      toggle.setAttribute("aria-expanded", open);
+      toggle.setAttribute("aria-label", open ? "Close menu" : "Open menu");
+    };
+    toggle.addEventListener("click", ()=> setOpen(!menu.classList.contains("open")));
+    menu.querySelectorAll("a").forEach(a=> a.addEventListener("click", ()=> setOpen(false)));
+    document.addEventListener("keydown", e=>{ if(e.key==="Escape") setOpen(false); });
+  }
+
+  /* ---------- custom cursor + magnetic ---------- */
+  function cursor(){
+    if (!fine || !hasGSAP) return;
+    const dot = document.querySelector(".cursor-dot");
+    const ring = document.querySelector(".cursor-ring");
+    gsap.set([dot,ring], {opacity:1});
+    const xd = gsap.quickTo(dot,"x",{duration:.15,ease:"power3"});
+    const yd = gsap.quickTo(dot,"y",{duration:.15,ease:"power3"});
+    const xr = gsap.quickTo(ring,"x",{duration:.4,ease:"power3"});
+    const yr = gsap.quickTo(ring,"y",{duration:.4,ease:"power3"});
+    window.addEventListener("mousemove", e=>{ xd(e.clientX); yd(e.clientY); xr(e.clientX); yr(e.clientY); });
+    document.querySelectorAll("a,button,[data-magnetic],.chip,.svc-card").forEach(el=>{
+      el.addEventListener("mouseenter", ()=> ring.classList.add("grow"));
+      el.addEventListener("mouseleave", ()=> ring.classList.remove("grow"));
+    });
+    // magnetic
+    document.querySelectorAll("[data-magnetic]").forEach(el=>{
+      const strength = 0.4;
+      el.addEventListener("mousemove", e=>{
+        const r = el.getBoundingClientRect();
+        const mx = e.clientX - (r.left + r.width/2);
+        const my = e.clientY - (r.top + r.height/2);
+        gsap.to(el, {x:mx*strength, y:my*strength, duration:.5, ease:"power3.out"});
+      });
+      el.addEventListener("mouseleave", ()=> gsap.to(el, {x:0, y:0, duration:.6, ease:"elastic.out(1,.4)"}));
+    });
+  }
+
+  /* ---------- booking form ---------- */
+  function form(){
+    const f = document.getElementById("bookForm");
+    if (!f) return;
+    f.addEventListener("submit", e=>{
+      e.preventDefault();
+      const name = (f.name.value || "").trim();
+      const phone = (f.phone.value || "").trim();
+      if (!name){ f.querySelector("#f-name").focus(); return; }
+      const done = document.getElementById("formDone");
+      document.getElementById("doneName").textContent = "Thanks, " + name.split(" ")[0] + "!";
+      document.getElementById("doneMsg").textContent = phone
+        ? "We’ll text " + phone + " shortly to confirm your visit."
+        : "We’ll be in touch shortly to confirm your visit.";
+      f.style.display = "none";
+      done.classList.add("show");
+    });
+  }
+
+  /* ---------- WebGL golden-hour gradient (Three.js) ---------- */
+  function gl(){
+    const canvas = document.getElementById("gl");
+    if (!canvas || !window.THREE) return;
+    let renderer;
+    try{
+      renderer = new THREE.WebGLRenderer({canvas, antialias:false, alpha:false, powerPreference:"low-power"});
+    }catch(err){ canvas.style.background = "linear-gradient(160deg,#F6D98C,#EAA078 45%,#E7B4A4)"; return; }
+
+    const scene = new THREE.Scene();
+    const camera = new THREE.Camera();
+
+    const uniforms = {
+      uTime:{value:0},
+      uRes:{value:new THREE.Vector2(1,1)}
+    };
+
+    const vert = `
+      varying vec2 vUv;
+      void main(){ vUv = uv; gl_Position = vec4(position, 1.0); }
+    `;
+    const frag = `
+      precision highp float;
+      varying vec2 vUv;
+      uniform float uTime;
+      uniform vec2 uRes;
+
+      vec3 mod289(vec3 x){return x - floor(x*(1.0/289.0))*289.0;}
+      vec2 mod289(vec2 x){return x - floor(x*(1.0/289.0))*289.0;}
+      vec3 permute(vec3 x){return mod289(((x*34.0)+1.0)*x);}
+      float snoise(vec2 v){
+        const vec4 C = vec4(0.211324865405187,0.366025403784439,-0.577350269189626,0.024390243902439);
+        vec2 i = floor(v + dot(v, C.yy));
+        vec2 x0 = v - i + dot(i, C.xx);
+        vec2 i1 = (x0.x > x0.y) ? vec2(1.0,0.0) : vec2(0.0,1.0);
+        vec4 x12 = x0.xyxy + C.xxzz; x12.xy -= i1;
+        i = mod289(i);
+        vec3 p = permute( permute( i.y + vec3(0.0, i1.y, 1.0)) + i.x + vec3(0.0, i1.x, 1.0));
+        vec3 m = max(0.5 - vec3(dot(x0,x0), dot(x12.xy,x12.xy), dot(x12.zw,x12.zw)), 0.0);
+        m = m*m; m = m*m;
+        vec3 x = 2.0*fract(p*C.www)-1.0;
+        vec3 h = abs(x)-0.5; vec3 ox = floor(x+0.5); vec3 a0 = x-ox;
+        m *= 1.79284291400159 - 0.85373472095314*(a0*a0+h*h);
+        vec3 g;
+        g.x = a0.x*x0.x + h.x*x0.y;
+        g.yz = a0.yz*x12.xz + h.yz*x12.yw;
+        return 130.0*dot(m,g);
+      }
+      float fbm(vec2 p){
+        float s=0.0, a=0.5;
+        for(int i=0;i<5;i++){ s+=a*snoise(p); p*=2.0; a*=0.5; }
+        return s;
+      }
+      void main(){
+        vec2 uv = vUv;
+        float asp = uRes.x/max(uRes.y,1.0);
+        vec2 p = vec2(uv.x*asp, uv.y);
+        float t = uTime*0.035;
+        float n  = fbm(p*1.5 + vec2(t, -t*0.6));
+        float n2 = fbm(p*0.75 - vec2(t*0.5, t*0.3) + n*0.45);
+        float m = 0.5 + 0.5*n2;
+
+        vec3 cCream = vec3(0.984,0.945,0.886);
+        vec3 cGold  = vec3(0.949,0.769,0.388);
+        vec3 cCoral = vec3(0.918,0.486,0.392);
+        vec3 cRose  = vec3(0.906,0.706,0.643);
+        vec3 cPlum  = vec3(0.255,0.137,0.231);
+
+        vec3 col = mix(cCream, cGold, smoothstep(0.18,0.7,m));
+        col = mix(col, cCoral, smoothstep(0.55,0.96,m)*0.65);
+        col = mix(col, cRose,  smoothstep(0.0,0.4,1.0-m)*0.45);
+        col = mix(col, cCream, smoothstep(0.55,1.0,uv.y)*0.35);
+        col = mix(col, mix(col,cPlum,0.12), smoothstep(0.42,0.0,uv.y)*0.5);
+
+        float vig = smoothstep(1.3,0.25,length((uv-0.5)*vec2(asp,1.0)));
+        col *= mix(0.93,1.0,vig);
+
+        float gr = fract(sin(dot(uv*uRes, vec2(12.9898,78.233)))*43758.5453);
+        col += (gr-0.5)*0.022;
+
+        gl_FragColor = vec4(col, 1.0);
+      }
+    `;
+
+    const material = new THREE.ShaderMaterial({uniforms, vertexShader:vert, fragmentShader:frag});
+    const mesh = new THREE.Mesh(new THREE.PlaneGeometry(2,2), material);
+    scene.add(mesh);
+
+    function resize(){
+      const w = canvas.clientWidth || window.innerWidth;
+      const h = canvas.clientHeight || window.innerHeight;
+      const dpr = Math.min(window.devicePixelRatio || 1, 1.5);
+      renderer.setPixelRatio(dpr);
+      renderer.setSize(w, h, false);
+      uniforms.uRes.value.set(w*dpr, h*dpr);
+    }
+    window.addEventListener("resize", resize);
+    resize();
+
+    if (reduce){ uniforms.uTime.value = 12.0; renderer.render(scene,camera); return; }
+
+    const clock = new THREE.Clock();
+    let running = true;
+    document.addEventListener("visibilitychange", ()=> running = !document.hidden);
+    // pause when hero scrolled away
+    let inView = true;
+    const io = new IntersectionObserver(([e])=> inView = e.isIntersecting, {threshold:0});
+    io.observe(canvas);
+
+    function loop(){
+      requestAnimationFrame(loop);
+      if (!running || !inView) return;
+      uniforms.uTime.value += clock.getDelta();
+      renderer.render(scene, camera);
+    }
+    loop();
+  }
+
+  /* ---------- boot ---------- */
+  function boot(){
+    nav();
+    intro();
+    reveals();
+    manifesto();
+    counts();
+    steps();
+    vanHotspots();
+    marquee();
+    parallax();
+    cursor();
+    form();
+    gl();
+    if (hasGSAP && window.ScrollTrigger){ window.addEventListener("load", ()=> ScrollTrigger.refresh()); }
+  }
+  if (document.readyState === "loading") document.addEventListener("DOMContentLoaded", boot);
+  else boot();
+})();
+</script>
+</body>
+</html>
