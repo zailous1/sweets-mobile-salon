@@ -1,0 +1,1194 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Sweet's Mobile Salon — Phoenix's full-service salon on wheels</title>
+<meta name="description" content="Cuts, color, perms and blowouts in a beautifully built salon van, parked at your curb anywhere in the Phoenix Valley. Our water, our power, our very cold AC.">
+<meta name="theme-color" content="#F9E8D2">
+<meta property="og:title" content="Sweet's Mobile Salon — great hair makes house calls">
+<meta property="og:description" content="A full-service salon inside a beautifully built van. Phoenix, AZ.">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Gloock&family=Hanken+Grotesk:wght@400;500;600;700&family=Ms+Madi&display=swap" rel="stylesheet">
+<style>
+/* ============================================================
+   SWEET'S MOBILE SALON — design tokens
+   The page is a drive across the Valley: scroll = golden hour.
+   ============================================================ */
+:root{
+  --bg:#F9E8D2;            /* animated by GSAP through 7 sunset stops */
+  --ink:#3D1F33;           /* flips to cream at dusk */
+  --accent:#E2563C;        /* sweet coral */
+  --accent-deep:#C24530;
+  --gold:#F0B25E;
+  --rose:#EE9CA6;
+  --cream:#FFF6E9;
+  --night:#251733;
+
+  /* derived — these re-mix automatically as --bg/--ink animate */
+  --soft:color-mix(in srgb, var(--ink) 7%, transparent);
+  --line:color-mix(in srgb, var(--ink) 16%, transparent);
+  --line-strong:color-mix(in srgb, var(--ink) 34%, transparent);
+  --m-far:color-mix(in srgb, var(--ink) 16%, var(--bg));
+  --m-near:color-mix(in srgb, var(--ink) 30%, var(--bg));
+  --m-cactus:color-mix(in srgb, var(--ink) 46%, var(--bg));
+  --ground:color-mix(in srgb, var(--ink) 10%, var(--bg));
+  --road:color-mix(in srgb, var(--ink) 72%, var(--bg));
+
+  --font-display:'Gloock', 'Iowan Old Style', Georgia, serif;
+  --font-script:'Ms Madi', 'Segoe Script', cursive;
+  --font-body:'Hanken Grotesk', 'Avenir Next', 'Segoe UI', sans-serif;
+
+  --wrap:1180px;
+  --r-card:22px;
+}
+*{box-sizing:border-box;margin:0;padding:0}
+html{scroll-behavior:smooth}
+@media (prefers-reduced-motion: reduce){ html{scroll-behavior:auto} }
+html,body{overflow-x:clip}
+body{
+  background:var(--bg);
+  color:var(--ink);
+  font-family:var(--font-body);
+  font-size:1.0625rem;
+  line-height:1.6;
+  -webkit-font-smoothing:antialiased;
+}
+img,svg{display:block;max-width:100%}
+a{color:inherit}
+::selection{background:var(--gold);color:#3D1F33}
+
+:focus-visible{outline:3px solid var(--gold);outline-offset:3px;border-radius:6px}
+
+/* ---------- fixed sky layer: the sun sets while you scroll ---------- */
+.sky{position:fixed;inset:0;z-index:0;pointer-events:none;overflow:hidden}
+.sun{
+  --sunA:#FFE9B8; --sunB:#F6B14E;
+  position:absolute;left:64%;top:16%;
+  width:clamp(150px,22vw,280px);aspect-ratio:1;
+  margin-left:calc(clamp(150px,22vw,280px) / -2);
+  border-radius:50%;
+  background:radial-gradient(circle at 50% 42%, var(--sunA) 0 38%, var(--sunB) 62%, transparent 72%);
+  filter:blur(1px) drop-shadow(0 0 60px var(--sunB));
+}
+#stars{position:absolute;inset:0;opacity:0}
+.star{position:absolute;width:3px;height:3px;border-radius:50%;background:#FFE9C4;animation:twinkle 3.4s ease-in-out infinite}
+.star.big{width:4.5px;height:4.5px}
+@keyframes twinkle{0%,100%{opacity:.25;transform:scale(.85)}50%{opacity:1;transform:scale(1.12)}}
+@media (prefers-reduced-motion: reduce){ .star{animation:none;opacity:.8} }
+
+main,header,footer,.marquee{position:relative;z-index:1}
+
+/* ---------- nav ---------- */
+.nav{
+  position:fixed;inset-inline:0;top:14px;z-index:50;
+  display:flex;justify-content:center;padding-inline:14px;
+}
+.nav-pill{
+  width:min(var(--wrap),100%);
+  display:flex;align-items:center;gap:1.4rem;
+  background:color-mix(in srgb, var(--bg) 72%, transparent);
+  backdrop-filter:blur(14px);-webkit-backdrop-filter:blur(14px);
+  border:1px solid var(--line);
+  border-radius:999px;
+  padding:.55rem .65rem .55rem 1.35rem;
+  box-shadow:0 10px 30px color-mix(in srgb, var(--ink) 12%, transparent);
+}
+.brand{display:flex;flex-direction:column;line-height:1;text-decoration:none}
+.brand-script{font-family:var(--font-script);font-size:1.85rem;transform:rotate(-3deg)}
+.brand-sub{font-size:.55rem;font-weight:700;letter-spacing:.34em;margin-top:-2px;opacity:.75}
+.nav-links{display:flex;gap:1.5rem;margin-left:auto;margin-right:.6rem}
+.nav-links a{
+  text-decoration:none;font-weight:600;font-size:.92rem;opacity:.85;
+  border-bottom:2px solid transparent;padding-bottom:2px;
+}
+.nav-links a:hover{opacity:1;border-bottom-color:var(--accent)}
+.btn{
+  display:inline-flex;align-items:center;gap:.5rem;
+  background:var(--accent);color:#FFF4E6;
+  border:none;border-radius:999px;cursor:pointer;
+  font:600 .98rem/1 var(--font-body);
+  padding:.95rem 1.6rem;text-decoration:none;
+  transition:transform .18s ease, box-shadow .18s ease, background .18s ease;
+  box-shadow:0 6px 18px color-mix(in srgb, var(--accent) 38%, transparent);
+}
+.btn:hover{transform:translateY(-2px);background:var(--accent-deep);box-shadow:0 10px 26px color-mix(in srgb, var(--accent) 45%, transparent)}
+.btn:active{transform:translateY(0)}
+.btn-ghost{
+  background:transparent;color:var(--ink);box-shadow:none;
+  border:1.5px solid var(--line-strong);
+}
+.btn-ghost:hover{background:var(--soft);transform:translateY(-2px);box-shadow:none}
+.nav .btn{padding:.78rem 1.3rem}
+
+/* ---------- shared section bones ---------- */
+.sec{padding-block:clamp(4.5rem,9vw,8rem)}
+.wrap{width:min(var(--wrap),100%);margin-inline:auto;padding-inline:clamp(1.15rem,4vw,2.4rem)}
+.mile{
+  display:flex;align-items:center;gap:.8rem;
+  font-size:.74rem;font-weight:700;letter-spacing:.3em;text-transform:uppercase;
+  opacity:.78;margin-bottom:1.4rem;
+}
+.mile::before{content:"";width:42px;height:2px;background:var(--accent);border-radius:2px;flex:none}
+h2{
+  font-family:var(--font-display);font-weight:400;
+  font-size:clamp(2.1rem,4.6vw,3.6rem);
+  line-height:1.06;letter-spacing:-.01em;
+  max-width:18ch;
+}
+h2 .script,.h-script{font-family:var(--font-script);font-weight:400;color:var(--accent);letter-spacing:0}
+.lede{max-width:56ch;font-size:clamp(1.02rem,1.5vw,1.18rem);opacity:.92;margin-top:1.1rem}
+
+/* ---------- hero ---------- */
+.hero{
+  position:relative;
+  min-height:100svh;
+  display:flex;flex-direction:column;
+  padding-top:clamp(108px,15vh,168px);
+  overflow:clip;
+}
+.hero .wrap{position:relative;z-index:3}
+.eyebrow{
+  display:inline-flex;align-items:center;gap:.6rem;
+  font-size:.76rem;font-weight:700;letter-spacing:.28em;text-transform:uppercase;
+  border:1px solid var(--line-strong);border-radius:999px;
+  padding:.5rem 1rem;margin-bottom:1.5rem;
+  background:color-mix(in srgb, var(--bg) 55%, transparent);
+}
+.eyebrow .dot{width:8px;height:8px;border-radius:50%;background:var(--accent)}
+h1{
+  font-family:var(--font-display);font-weight:400;
+  font-size:clamp(2.7rem,7vw,6.1rem);
+  line-height:.99;letter-spacing:-.015em;
+  max-width:13ch;
+}
+h1 .hl-line{display:block;overflow:hidden}
+h1 .hl-inner{display:block}
+h1 .h-script{font-size:1.16em;line-height:1.18;display:inline-block;transform:rotate(-2deg)}
+.hero-sub{max-width:46ch;margin-top:1.4rem;font-size:clamp(1.02rem,1.5vw,1.16rem)}
+.hero-ctas{display:flex;flex-wrap:wrap;gap:.9rem;margin-top:1.9rem}
+.hero-fine{margin-top:1.3rem;font-size:.85rem;font-weight:600;letter-spacing:.04em;opacity:.72}
+
+.hero-art{position:absolute;inset-inline:0;bottom:0;height:min(52vh,560px);z-index:1;pointer-events:none}
+.horizon{position:absolute;inset-inline:0;bottom:0;width:100%;height:100%}
+.hero-van{
+  position:absolute;
+  bottom:clamp(10px,2.4vh,26px);
+  right:clamp(2vw,6vw,9vw);
+  width:clamp(330px,40vw,560px);
+  z-index:2;
+}
+.scroll-cue{
+  position:absolute;left:50%;bottom:14px;transform:translateX(-50%);
+  z-index:3;font-size:.72rem;font-weight:700;letter-spacing:.3em;text-transform:uppercase;
+  opacity:.6;display:flex;flex-direction:column;align-items:center;gap:6px;
+}
+.scroll-cue::after{content:"";width:2px;height:30px;background:var(--ink);opacity:.5;border-radius:2px}
+
+/* ---------- marquee ---------- */
+.marquee{
+  border-block:1.5px solid var(--line);
+  padding-block:.95rem;overflow:hidden;
+  background:color-mix(in srgb, var(--ink) 4%, transparent);
+}
+.marq-track{display:flex;align-items:center;gap:2.6rem;width:max-content;will-change:transform}
+.marq-track span{
+  font-family:var(--font-display);
+  font-size:clamp(1.05rem,1.8vw,1.45rem);
+  letter-spacing:.12em;white-space:nowrap;
+}
+.marq-track svg{width:40px;height:auto;flex:none;opacity:.9}
+
+/* ---------- menu ---------- */
+.menu-grid{display:grid;grid-template-columns:minmax(280px,5fr) 7fr;gap:clamp(2rem,5vw,4.5rem);align-items:start}
+.menu-intro{position:sticky;top:110px}
+.menu-note{
+  margin-top:1.6rem;padding:1.1rem 1.3rem;border-left:3px solid var(--gold);
+  background:var(--soft);border-radius:0 14px 14px 0;font-size:.95rem;
+}
+.menu-groups{display:grid;gap:2.4rem}
+.menu-group h3{
+  font-family:var(--font-script);font-weight:400;
+  font-size:clamp(1.9rem,2.6vw,2.4rem);color:var(--accent);
+  margin-bottom:.7rem;transform:rotate(-1.5deg);
+}
+.menu-row{display:flex;align-items:baseline;gap:.7rem;padding-block:.62rem;border:0}
+.menu-row + .menu-row{border-top:1px solid color-mix(in srgb, var(--ink) 9%, transparent)}
+.menu-row .item{font-weight:600}
+.menu-row .desc{display:block;font-size:.85rem;font-weight:400;opacity:.7}
+.menu-row .dots{flex:1;border-bottom:2px dotted var(--line-strong);transform:translateY(-5px);min-width:24px}
+.menu-row .price{font-weight:700;font-variant-numeric:tabular-nums;white-space:nowrap}
+.menu-row .price small{font-weight:600;opacity:.65;font-size:.78em;margin-right:.18em}
+
+/* ---------- van cutaway ---------- */
+.van-head{display:flex;flex-wrap:wrap;align-items:end;justify-content:space-between;gap:1rem;margin-bottom:2.6rem}
+.cutaway-frame{
+  background:color-mix(in srgb, var(--ink) 5%, transparent);
+  border:1px solid var(--line);border-radius:28px;
+  padding:clamp(1rem,3vw,2.6rem);
+}
+.cutaway{width:100%;height:auto}
+.spec-grid{
+  margin-top:2.2rem;padding:0;list-style:none;
+  display:grid;grid-template-columns:repeat(3,1fr);gap:1.1rem;
+  counter-reset:spec;
+}
+.spec{
+  list-style:none;
+  background:var(--soft);border:1px solid var(--line);
+  border-radius:var(--r-card);padding:1.15rem 1.25rem;
+}
+.spec b{display:flex;align-items:center;gap:.6rem;font-size:1rem;margin-bottom:.3rem}
+.spec b::before{
+  counter-increment:spec;content:counter(spec, decimal-leading-zero);
+  display:grid;place-items:center;flex:none;
+  width:28px;height:28px;border-radius:50%;
+  background:var(--accent);color:#FFF4E6;font-size:.72rem;font-weight:700;
+}
+.spec p{font-size:.92rem;opacity:.85}
+
+/* ---------- how it works (the road) ---------- */
+.road-zone{position:relative;margin-top:2.8rem}
+#roadSvg{position:absolute;inset:0;width:100%;height:100%;pointer-events:none}
+.steps{display:grid;grid-template-columns:1fr minmax(180px,260px) 1fr;row-gap:clamp(4rem,9vw,7.5rem)}
+.step{grid-column:1;max-width:430px;justify-self:end;text-align:right}
+.step:nth-child(even){grid-column:3;justify-self:start;text-align:left}
+.step:nth-of-type(1){grid-row:1}
+.step:nth-of-type(2){grid-row:2}
+.step:nth-of-type(3){grid-row:3}
+.road-cap{grid-row:4}
+.step .k{
+  font-family:var(--font-display);font-size:clamp(2.6rem,4vw,3.6rem);
+  color:var(--accent);line-height:1;
+}
+.step h3{font-family:var(--font-display);font-weight:400;font-size:clamp(1.45rem,2.2vw,1.9rem);margin:.35rem 0 .5rem}
+.step p{opacity:.9;font-size:.99rem}
+.road-cap{
+  grid-column:1 / -1;justify-self:center;text-align:center;
+  margin-top:clamp(7rem,13vw,10rem);
+  font-family:var(--font-script);font-size:1.7rem;transform:rotate(-2deg);opacity:.95;
+}
+
+/* ---------- where we roll ---------- */
+.where-grid{display:grid;grid-template-columns:5fr 6fr;gap:clamp(2rem,5vw,4rem);align-items:center}
+.areas{display:flex;flex-wrap:wrap;gap:.55rem;margin-top:1.6rem}
+.areas li{
+  list-style:none;font-size:.9rem;font-weight:600;
+  border:1.5px solid var(--line-strong);border-radius:999px;
+  padding:.45rem .95rem;background:color-mix(in srgb, var(--ink) 5%, transparent);
+}
+.travel-note{margin-top:1.5rem;font-size:.95rem;opacity:.85;max-width:46ch}
+.mapwrap{justify-self:center;width:min(560px,100%)}
+#valleyMap{width:100%;height:auto}
+#valleyMap text{font-family:var(--font-body);font-weight:600}
+
+/* ---------- testimonials ---------- */
+.quotes{display:grid;grid-template-columns:repeat(3,1fr);gap:1.2rem;margin-top:2.4rem}
+.quote{
+  background:color-mix(in srgb, var(--ink) 7%, transparent);
+  border:1px solid var(--line);border-radius:var(--r-card);
+  padding:1.7rem 1.6rem;display:flex;flex-direction:column;gap:1rem;
+}
+.quote .stars-row{color:var(--gold);letter-spacing:.18em;font-size:.95rem}
+.quote .open{font-family:var(--font-script);font-size:2rem;line-height:1;color:var(--rose)}
+.quote p{font-size:1rem}
+.quote footer{margin-top:auto;font-size:.85rem;font-weight:700;letter-spacing:.08em;text-transform:uppercase;opacity:.75}
+
+/* ---------- booking ---------- */
+.book-grid{display:grid;grid-template-columns:5fr 6fr;gap:clamp(2.5rem,6vw,5rem);align-items:start}
+.book-side .h-script{font-size:clamp(2.4rem,4vw,3.4rem);display:inline-block}
+.contact-alt{margin-top:2rem;display:grid;gap:.9rem}
+.contact-alt a{
+  display:flex;align-items:center;gap:.8rem;text-decoration:none;font-weight:600;
+  padding:.95rem 1.15rem;border:1.5px solid var(--line-strong);border-radius:16px;
+  transition:background .15s ease;
+}
+.contact-alt a:hover{background:var(--soft)}
+.contact-alt .ico{
+  width:38px;height:38px;border-radius:12px;display:grid;place-items:center;flex:none;
+  background:var(--accent);color:#FFF4E6;font-size:1rem;
+}
+.hours{margin-top:1.6rem;font-size:.92rem;opacity:.85}
+.form-card{
+  background:color-mix(in srgb, var(--ink) 8%, transparent);
+  border:1px solid var(--line);border-radius:26px;
+  padding:clamp(1.4rem,3vw,2.2rem);
+}
+.form-card .frow{display:grid;grid-template-columns:1fr 1fr;gap:1rem}
+.field{display:grid;gap:.4rem;margin-bottom:1rem}
+.field label{font-size:.8rem;font-weight:700;letter-spacing:.12em;text-transform:uppercase;opacity:.85}
+.field input,.field select,.field textarea{
+  font:500 1rem var(--font-body);color:var(--ink);
+  background:color-mix(in srgb, var(--bg) 40%, transparent);
+  border:1.5px solid var(--line-strong);border-radius:13px;
+  padding:.85rem 1rem;width:100%;
+}
+.field select{appearance:none;background-image:linear-gradient(45deg,transparent 50%,currentColor 50%),linear-gradient(135deg,currentColor 50%,transparent 50%);background-position:calc(100% - 19px) 55%,calc(100% - 13px) 55%;background-size:6px 6px;background-repeat:no-repeat}
+.field input:focus,.field select:focus,.field textarea:focus{outline:none;border-color:var(--gold);box-shadow:0 0 0 3px color-mix(in srgb, var(--gold) 30%, transparent)}
+.field input::placeholder,.field textarea::placeholder{color:color-mix(in srgb, var(--ink) 50%, transparent)}
+.form-card .btn{width:100%;justify-content:center;font-size:1.05rem;padding:1.05rem}
+.form-fine{margin-top:.8rem;font-size:.8rem;text-align:center;opacity:.7}
+.booked{display:none;text-align:center;padding:2.5rem 1rem}
+.booked .big{font-family:var(--font-display);font-size:1.9rem;margin:.8rem 0 .5rem}
+.booked .sig{font-family:var(--font-script);font-size:2.1rem;color:var(--gold);transform:rotate(-3deg);display:inline-block;margin-top:1rem}
+.form-card.is-done form{display:none}
+.form-card.is-done .booked{display:block}
+
+/* ---------- footer ---------- */
+.footer{padding:3.5rem 0 2.5rem;border-top:1px solid var(--line)}
+.foot-grid{display:grid;grid-template-columns:2fr 1fr 1fr 1fr;gap:2rem}
+.foot-grid h4{font-size:.78rem;letter-spacing:.24em;text-transform:uppercase;opacity:.7;margin-bottom:.8rem}
+.foot-grid ul{list-style:none;display:grid;gap:.45rem;font-size:.95rem}
+.foot-grid a{text-decoration:none;opacity:.9}
+.foot-grid a:hover{text-decoration:underline;text-underline-offset:3px}
+.foot-brand .brand-script{font-size:2.6rem}
+.foot-brand p{font-size:.92rem;opacity:.8;max-width:30ch;margin-top:.6rem}
+.legal{margin-top:2.6rem;padding-top:1.4rem;border-top:1px solid var(--line);display:flex;flex-wrap:wrap;gap:1rem;justify-content:space-between;font-size:.8rem;opacity:.7}
+
+/* ---------- responsive ---------- */
+@media (max-width:980px){
+  .menu-grid,.where-grid,.book-grid{grid-template-columns:1fr}
+  .menu-intro{position:static}
+  .spec-grid{grid-template-columns:1fr 1fr}
+  .quotes{grid-template-columns:1fr}
+  .foot-grid{grid-template-columns:1fr 1fr}
+  .mapwrap{order:2}
+}
+@media (max-width:760px){
+  body{font-size:1rem}
+  .nav-links{display:none}
+  .nav-pill{gap:.8rem}
+  .hero{padding-top:clamp(96px,13vh,130px);padding-bottom:min(58vw,300px)}
+  .hero-art{height:42vh}
+  .hero-van{left:50%;right:auto;margin-left:calc(min(86vw,430px) / -2);width:min(86vw,430px);bottom:3vh}
+  .scroll-cue{display:none}
+  .steps{grid-template-columns:1fr;padding-left:54px;row-gap:3rem}
+  .step,.step:nth-child(even){grid-column:1;justify-self:start;text-align:left;max-width:none}
+  #roadSvg{display:none}
+  .road-cap{margin-top:1rem;justify-self:start;text-align:left}
+  .steps-mobile-line{display:block}
+  .spec-grid{grid-template-columns:1fr}
+  .form-card .frow{grid-template-columns:1fr}
+  #valleyMap .far-label{display:none}
+  #valleyMap .area-pt text{font-size:19px}
+  #valleyMap .ring-label{font-size:15px}
+}
+@media (min-width:761px){ .steps-mobile-line{display:none} }
+.steps-mobile-line{position:absolute;left:18px;top:8px;bottom:8px;width:4px;border-left:4px dashed var(--line-strong)}
+
+@media (prefers-reduced-motion: reduce){
+  .btn,.contact-alt a{transition:none}
+  .marq-track{flex-wrap:wrap;width:auto;justify-content:center;row-gap:.9rem}
+  .marq-dup{display:none !important}
+}
+</style>
+</head>
+<body>
+
+<!-- fixed sky: sun + stars, scrubbed by scroll -->
+<div class="sky" aria-hidden="true">
+  <div class="sun" id="sun"></div>
+  <div id="stars"></div>
+</div>
+
+<header class="nav">
+  <div class="nav-pill">
+    <a class="brand" href="#top" aria-label="Sweet's Mobile Salon — back to top">
+      <span class="brand-script">Sweet&rsquo;s</span>
+      <span class="brand-sub">Mobile&nbsp;Salon</span>
+    </a>
+    <nav class="nav-links" aria-label="Sections">
+      <a href="#menu">Menu</a>
+      <a href="#van">The van</a>
+      <a href="#how">How it works</a>
+      <a href="#where">Where we roll</a>
+    </nav>
+    <a class="btn" href="#book">Book a house call</a>
+  </div>
+</header>
+
+<main id="top">
+
+  <!-- ================= HERO ================= -->
+  <section class="hero" data-bg="#F9E8D2" data-ink="#3D1F33" aria-label="Intro">
+    <div class="wrap">
+      <p class="eyebrow" data-hero-fade><span class="dot"></span>Phoenix, AZ · A full salon on wheels</p>
+      <h1>
+        <span class="hl-line"><span class="hl-inner">Great hair</span></span>
+        <span class="hl-line"><span class="hl-inner">makes <span class="h-script">house&nbsp;calls.</span></span></span>
+      </h1>
+      <p class="hero-sub" data-hero-fade>Sweet&rsquo;s is a full-service salon inside a beautifully built van &mdash; cuts, color, perms, blowouts &mdash; parked at your curb anywhere in the Valley. Our water, our power, our very cold AC. Your driveway.</p>
+      <div class="hero-ctas" data-hero-fade>
+        <a class="btn" href="#book">Book a house call</a>
+        <a class="btn btn-ghost" href="#menu">See the menu</a>
+      </div>
+      <p class="hero-fine" data-hero-fade>Tue&ndash;Sat across the Valley &middot; Self-contained water &amp; power &middot; AC rated for July</p>
+    </div>
+
+    <div class="hero-art" aria-hidden="true">
+      <!-- desert horizon -->
+      <svg class="horizon" viewBox="0 0 1440 300" preserveAspectRatio="xMidYMax slice" aria-hidden="true">
+        <defs>
+          <g id="sag">
+            <path d="M16 120 V20 Q16 9 22 9 Q28 9 28 20 V120 Z"/>
+            <rect x="2" y="46" width="11" height="30" rx="5.5"/>
+            <rect x="4" y="68" width="14" height="11" ry="5.5"/>
+            <rect x="31" y="30" width="11" height="32" rx="5.5"/>
+            <rect x="26" y="54" width="14" height="11" ry="5.5"/>
+          </g>
+        </defs>
+        <!-- far ridge with Camelback's two humps -->
+        <path class="ridge ridge-far" fill="var(--m-far)" d="M0 196 Q120 150 250 178 Q360 200 470 172 Q560 150 660 176 Q760 198 830 168 Q872 110 928 102 Q972 98 1004 134 Q1018 150 1036 142 Q1090 96 1156 130 Q1240 172 1330 158 Q1390 150 1440 164 L1440 300 L0 300 Z"/>
+        <!-- near ridge -->
+        <path class="ridge ridge-near" fill="var(--m-near)" d="M0 244 Q160 206 330 234 Q480 256 640 230 Q800 206 950 238 Q1100 266 1250 236 Q1350 218 1440 238 L1440 300 L0 300 Z"/>
+        <!-- saguaros -->
+        <g fill="var(--m-cactus)">
+          <use href="#sag" transform="translate(96,118) scale(1.05)"/>
+          <use href="#sag" transform="translate(286,142) scale(.8)"/>
+          <use href="#sag" transform="translate(1108,128) scale(.95)"/>
+          <use href="#sag" transform="translate(1322,150) scale(.7)"/>
+        </g>
+        <!-- desert floor -->
+        <rect class="ridge" y="244" width="1440" height="56" fill="var(--ground)"/>
+      </svg>
+
+      <!-- the van -->
+      <svg class="hero-van" id="heroVan" viewBox="0 0 560 330" aria-hidden="true">
+        <defs>
+          <linearGradient id="stripeGrad" x1="0" y1="0" x2="1" y2="0">
+            <stop offset="0" stop-color="#E2563C"/>
+            <stop offset=".55" stop-color="#EE9CA6"/>
+            <stop offset="1" stop-color="#F0B25E"/>
+          </linearGradient>
+          <pattern id="awnStripes" width="26" height="40" patternUnits="userSpaceOnUse">
+            <rect width="26" height="40" fill="#FFF6E9"/>
+            <rect width="13" height="40" fill="#E2563C"/>
+          </pattern>
+        </defs>
+
+        <ellipse class="van-shadow" cx="285" cy="308" rx="232" ry="15" fill="#3D1F33" opacity=".18"/>
+
+        <g id="speedlines" stroke="#3D1F33" stroke-width="5" stroke-linecap="round" opacity="0">
+          <line x1="-10" y1="170" x2="60" y2="170"/>
+          <line x1="-30" y1="210" x2="52" y2="210"/>
+          <line x1="-6" y1="250" x2="46" y2="250"/>
+        </g>
+
+        <g id="vanBody">
+
+          <!-- body -->
+          <path d="M104 284 Q88 284 88 268 L88 152 Q88 114 128 110 L352 100 Q386 98 402 122 L442 176 Q498 184 502 224 L502 266 Q502 284 482 284 Z"
+                fill="#FFF6E9" stroke="#3D1F33" stroke-width="5" stroke-linejoin="round"/>
+
+          <!-- roof AC -->
+          <rect x="146" y="80" width="100" height="32" rx="9" fill="#F6E3CB" stroke="#3D1F33" stroke-width="4.5"/>
+          <line x1="164" y1="89" x2="164" y2="104" stroke="#3D1F33" stroke-width="3.5" stroke-linecap="round"/>
+          <line x1="186" y1="89" x2="186" y2="104" stroke="#3D1F33" stroke-width="3.5" stroke-linecap="round"/>
+          <line x1="208" y1="89" x2="208" y2="104" stroke="#3D1F33" stroke-width="3.5" stroke-linecap="round"/>
+          <line x1="230" y1="89" x2="230" y2="104" stroke="#3D1F33" stroke-width="3.5" stroke-linecap="round"/>
+
+          <!-- windshield + cab window -->
+          <path d="M404 132 L436 176 L382 176 Q370 176 370 164 L370 142 Q370 130 382 130 Z" fill="#CDE8E4" stroke="#3D1F33" stroke-width="4.5" stroke-linejoin="round"/>
+          <rect x="300" y="130" width="54" height="44" rx="11" fill="#CDE8E4" stroke="#3D1F33" stroke-width="4.5"/>
+
+          <!-- door seam + handle + glow -->
+          <ellipse id="doorGlow" cx="330" cy="290" rx="46" ry="10" fill="#F0B25E" opacity="0"/>
+          <line x1="362" y1="112" x2="362" y2="280" stroke="#3D1F33" stroke-width="3.5" opacity=".55"/>
+          <rect x="348" y="196" width="10" height="4.5" rx="2.2" fill="#3D1F33"/>
+
+          <!-- side art -->
+          <text x="204" y="198" text-anchor="middle" font-family="'Ms Madi', cursive" font-size="54" fill="#3D1F33" transform="rotate(-2 204 198)">Sweet&rsquo;s</text>
+          <text x="204" y="224" text-anchor="middle" font-family="'Hanken Grotesk', sans-serif" font-weight="700" font-size="12.5" letter-spacing="5" fill="#D85B3F">MOBILE SALON</text>
+
+          <!-- sunset stripe -->
+          <path d="M90 252 C150 240 220 262 290 252 C352 244 420 260 472 250" fill="none" stroke="url(#stripeGrad)" stroke-width="12" stroke-linecap="round"/>
+          <path d="M92 268 C152 258 222 276 292 268 C354 260 420 274 466 266" fill="none" stroke="#F0B25E" stroke-width="3.5" stroke-linecap="round" opacity=".85"/>
+
+          <!-- lights & bumpers -->
+          <circle cx="492" cy="230" r="8.5" fill="#F0B25E" stroke="#3D1F33" stroke-width="3.5"/>
+          <rect x="468" y="266" width="40" height="13" rx="6.5" fill="#3D1F33"/>
+          <rect x="82" y="266" width="30" height="13" rx="6.5" fill="#3D1F33"/>
+
+          <!-- awning over the door (unrolls after parking) -->
+          <g id="awning">
+            <rect x="248" y="100" width="118" height="7" rx="3.5" fill="#3D1F33"/>
+            <g id="awnCanopy">
+              <path d="M246 104 H368 V124 Q352.8 140 337.5 124 Q322.3 140 307 124 Q291.8 140 276.5 124 Q261.3 140 246 124 Z"
+                    fill="url(#awnStripes)" stroke="#3D1F33" stroke-width="4" stroke-linejoin="round"/>
+            </g>
+          </g>
+        </g>
+
+        <!-- wheels -->
+        <g class="wheel" transform="translate(170,286)">
+          <circle r="37" fill="#2C1726"/>
+          <circle r="21" fill="#FFF1E0" stroke="#3D1F33" stroke-width="4"/>
+          <g stroke="#3D1F33" stroke-width="4" stroke-linecap="round" class="spokes">
+            <line x1="0" y1="-16" x2="0" y2="-5"/><line x1="15.2" y1="4.9" x2="4.8" y2="1.5"/>
+            <line x1="9.4" y1="12.9" x2="3" y2="4.1"/><line x1="-9.4" y1="12.9" x2="-3" y2="4.1"/>
+            <line x1="-15.2" y1="4.9" x2="-4.8" y2="1.5"/>
+          </g>
+          <circle r="5" fill="#3D1F33"/>
+        </g>
+        <g class="wheel" transform="translate(424,286)">
+          <circle r="37" fill="#2C1726"/>
+          <circle r="21" fill="#FFF1E0" stroke="#3D1F33" stroke-width="4"/>
+          <g stroke="#3D1F33" stroke-width="4" stroke-linecap="round" class="spokes">
+            <line x1="0" y1="-16" x2="0" y2="-5"/><line x1="15.2" y1="4.9" x2="4.8" y2="1.5"/>
+            <line x1="9.4" y1="12.9" x2="3" y2="4.1"/><line x1="-9.4" y1="12.9" x2="-3" y2="4.1"/>
+            <line x1="-15.2" y1="4.9" x2="-4.8" y2="1.5"/>
+          </g>
+          <circle r="5" fill="#3D1F33"/>
+        </g>
+      </svg>
+    </div>
+    <p class="scroll-cue" aria-hidden="true">Scroll &mdash; the sun sets as you go</p>
+  </section>
+
+  <!-- ================= MARQUEE ================= -->
+  <div class="marquee" aria-hidden="true">
+    <div class="marq-track" id="marqTrack"></div>
+  </div>
+
+  <!-- ================= MENU ================= -->
+  <section class="sec" id="menu" data-bg="#F6D9AE" data-ink="#3D1F33" aria-labelledby="menu-h">
+    <div class="wrap menu-grid">
+      <div class="menu-intro" data-reveal>
+        <p class="mile">Mile 01 &mdash; The menu</p>
+        <h2 id="menu-h">The full salon menu, <span class="script">parked outside.</span></h2>
+        <p class="lede">Everything a brick-and-mortar salon does, we do at your curb &mdash; same pro lines, same techniques, zero waiting room.</p>
+        <div class="menu-note">
+          Every visit includes the drive, setup, and cleanup. The chair is always warm from the Arizona sun. (Kidding &mdash; the AC is excellent.)
+        </div>
+      </div>
+
+      <div class="menu-groups">
+        <div class="menu-group" data-reveal>
+          <h3>Cut &amp; style</h3>
+          <div class="menu-row"><span class="item">Precision cut <span class="desc">Consult, cut, finish &mdash; every texture</span></span><span class="dots"></span><span class="price"><small>from</small>$75</span></div>
+          <div class="menu-row"><span class="item">Kids&rsquo; cut (12 &amp; under) <span class="desc">Driveway distractions provided</span></span><span class="dots"></span><span class="price">$45</span></div>
+          <div class="menu-row"><span class="item">Blowout &amp; style</span><span class="dots"></span><span class="price">$65</span></div>
+          <div class="menu-row"><span class="item">Event &amp; bridal hair <span class="desc">We park at the venue, too</span></span><span class="dots"></span><span class="price"><small>from</small>$120</span></div>
+        </div>
+        <div class="menu-group" data-reveal>
+          <h3>Color</h3>
+          <div class="menu-row"><span class="item">Root touch-up</span><span class="dots"></span><span class="price"><small>from</small>$110</span></div>
+          <div class="menu-row"><span class="item">All-over color</span><span class="dots"></span><span class="price"><small>from</small>$140</span></div>
+          <div class="menu-row"><span class="item">Partial balayage</span><span class="dots"></span><span class="price"><small>from</small>$180</span></div>
+          <div class="menu-row"><span class="item">Full balayage <span class="desc">Includes gloss &amp; bond treatment</span></span><span class="dots"></span><span class="price"><small>from</small>$240</span></div>
+          <div class="menu-row"><span class="item">Gloss &amp; toner</span><span class="dots"></span><span class="price">$60</span></div>
+        </div>
+        <div class="menu-group" data-reveal>
+          <h3>Texture</h3>
+          <div class="menu-row"><span class="item">Classic perm <span class="desc">Yes, really &mdash; in the van</span></span><span class="dots"></span><span class="price"><small>from</small>$150</span></div>
+          <div class="menu-row"><span class="item">Keratin smoothing</span><span class="dots"></span><span class="price"><small>from</small>$220</span></div>
+        </div>
+        <div class="menu-group" data-reveal>
+          <h3>Care</h3>
+          <div class="menu-row"><span class="item">Deep conditioning</span><span class="dots"></span><span class="price">$40</span></div>
+          <div class="menu-row"><span class="item">Scalp treatment <span class="desc">Desert air is rough on scalps. We fix it.</span></span><span class="dots"></span><span class="price">$45</span></div>
+          <div class="menu-row"><span class="item">Group bookings <span class="desc">Bridal parties, sister days, team offsites</span></span><span class="dots"></span><span class="price">ask&nbsp;us</span></div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ================= THE VAN ================= -->
+  <section class="sec" id="van" data-bg="#F2BC90" data-ink="#3A1C31" aria-labelledby="van-h">
+    <div class="wrap">
+      <div class="van-head">
+        <div data-reveal>
+          <p class="mile">Mile 02 &mdash; The van</p>
+          <h2 id="van-h">A real salon. <span class="script">Really parked outside.</span></h2>
+        </div>
+        <p class="lede" style="max-width:38ch" data-reveal>Custom-built in 2026 on a long-wheelbase Sprinter. It never plugs into your house &mdash; everything it needs, it carries.</p>
+      </div>
+
+      <div class="cutaway-frame" data-reveal>
+        <svg class="cutaway" viewBox="0 0 940 430" role="img" aria-labelledby="cutTitle">
+          <title id="cutTitle">Cutaway illustration of the salon van interior</title>
+          <defs>
+            <linearGradient id="mirrorG" x1="0" y1="0" x2="0" y2="1">
+              <stop offset="0" stop-color="#FDEFD9"/><stop offset="1" stop-color="#F4CFAE"/>
+            </linearGradient>
+          </defs>
+          <ellipse cx="470" cy="396" rx="420" ry="16" fill="currentColor" opacity=".14"/>
+
+          <!-- body shell, wall removed -->
+          <path d="M70 372 Q52 372 52 354 L52 140 Q52 96 100 92 L660 78 Q702 76 720 104 L768 168 Q838 178 844 226 L844 352 Q844 372 822 372 Z"
+                fill="#FFF6E9" stroke="#3A1C31" stroke-width="6" stroke-linejoin="round"/>
+          <!-- interior cavity -->
+          <path d="M86 358 L86 146 Q86 122 112 120 L630 106 L630 358 Z" fill="#FBE4C8" stroke="#3A1C31" stroke-width="4"/>
+          <!-- floor -->
+          <rect x="86" y="344" width="544" height="14" fill="#E8B98C" stroke="#3A1C31" stroke-width="3.5"/>
+
+          <!-- cab -->
+          <path d="M722 116 L756 166 L668 166 Q654 166 654 152 L654 130 Q654 116 668 116 Z" fill="#CDE8E4" stroke="#3A1C31" stroke-width="5" stroke-linejoin="round"/>
+          <circle cx="828" cy="238" r="9" fill="#F0B25E" stroke="#3A1C31" stroke-width="4"/>
+
+          <!-- 1: backwash basin (rear) -->
+          <g stroke="#3A1C31" stroke-width="4" stroke-linejoin="round">
+            <rect x="106" y="262" width="74" height="82" rx="10" fill="#F6D9AE"/>
+            <path d="M104 248 Q143 226 184 248 L184 268 Q143 286 104 268 Z" fill="#3A1C31" stroke="none"/>
+            <path d="M112 252 Q143 238 176 252" fill="none" stroke="#FFF6E9" stroke-width="3.5"/>
+            <rect x="120" y="300" width="46" height="9" rx="4.5" fill="#E2563C" stroke="none"/>
+          </g>
+
+          <!-- 2: styling chair -->
+          <g stroke="#3A1C31" stroke-width="4.5" stroke-linejoin="round" stroke-linecap="round">
+            <ellipse cx="330" cy="340" rx="46" ry="10" fill="#3A1C31" stroke="none"/>
+            <line x1="330" y1="334" x2="330" y2="292"/>
+            <rect x="296" y="266" width="68" height="28" rx="12" fill="#E2563C"/>
+            <path d="M296 270 L296 206 Q296 192 310 192 L322 192 Q336 192 336 206 L336 266" fill="#E2563C"/>
+            <line x1="294" y1="252" x2="368" y2="252"/>
+          </g>
+
+          <!-- 3: color bar shelf -->
+          <g stroke="#3A1C31" stroke-width="3.5">
+            <rect x="402" y="160" width="150" height="9" rx="4.5" fill="#3A1C31" stroke="none"/>
+            <rect x="410" y="132" width="13" height="28" rx="4" fill="#E2563C"/>
+            <rect x="430" y="124" width="13" height="36" rx="4" fill="#F0B25E"/>
+            <rect x="450" y="136" width="13" height="24" rx="4" fill="#EE9CA6"/>
+            <rect x="470" y="128" width="13" height="32" rx="4" fill="#CDE8E4"/>
+            <rect x="490" y="134" width="13" height="26" rx="4" fill="#E2563C"/>
+            <rect x="510" y="126" width="13" height="34" rx="4" fill="#F0B25E"/>
+            <rect x="530" y="138" width="13" height="22" rx="4" fill="#EE9CA6"/>
+          </g>
+
+          <!-- 4: mirror + lights + counter -->
+          <g stroke="#3A1C31" stroke-width="4">
+            <rect x="540" y="196" width="74" height="104" rx="12" fill="url(#mirrorG)"/>
+            <line x1="556" y1="284" x2="586" y2="216" stroke="#FFF6E9" stroke-width="6" stroke-linecap="round" opacity=".9"/>
+            <circle cx="540" cy="206" r="5.5" fill="#F0B25E"/><circle cx="540" cy="232" r="5.5" fill="#F0B25E"/>
+            <circle cx="540" cy="258" r="5.5" fill="#F0B25E"/><circle cx="540" cy="284" r="5.5" fill="#F0B25E"/>
+            <circle cx="614" cy="206" r="5.5" fill="#F0B25E"/><circle cx="614" cy="232" r="5.5" fill="#F0B25E"/>
+            <circle cx="614" cy="258" r="5.5" fill="#F0B25E"/><circle cx="614" cy="284" r="5.5" fill="#F0B25E"/>
+            <rect x="524" y="306" width="106" height="38" rx="8" fill="#F6D9AE"/>
+            <circle cx="556" cy="325" r="3" fill="#3A1C31" stroke="none"/><circle cx="598" cy="325" r="3" fill="#3A1C31" stroke="none"/>
+          </g>
+
+          <!-- 5: towels cubby -->
+          <g stroke="#3A1C31" stroke-width="4">
+            <rect x="214" y="296" width="58" height="48" rx="8" fill="#F6D9AE"/>
+            <circle cx="232" cy="320" r="9" fill="#FFF6E9"/><circle cx="252" cy="320" r="9" fill="#EE9CA6"/>
+            <circle cx="242" cy="334" r="9" fill="#FFF6E9"/>
+          </g>
+
+          <!-- 6: AC + airflow -->
+          <g>
+            <rect x="300" y="120" width="120" height="22" rx="8" fill="#CDE8E4" stroke="#3A1C31" stroke-width="4"/>
+            <path d="M318 152 q-7 12 1 24" fill="none" stroke="#3A1C31" stroke-width="3.5" stroke-linecap="round" stroke-dasharray="2 7"/>
+            <path d="M358 152 q-7 12 1 24" fill="none" stroke="#3A1C31" stroke-width="3.5" stroke-linecap="round" stroke-dasharray="2 7"/>
+            <path d="M398 152 q-7 12 1 24" fill="none" stroke="#3A1C31" stroke-width="3.5" stroke-linecap="round" stroke-dasharray="2 7"/>
+          </g>
+
+          <!-- little plant -->
+          <g stroke="#3A1C31" stroke-width="3.5" stroke-linecap="round">
+            <path d="M598 344 l4 -22 q12 -8 16 -22" fill="none"/>
+            <path d="M602 330 q-12 -4 -16 -16" fill="none"/>
+            <path d="M604 322 q14 0 20 -10" fill="none"/>
+            <rect x="588" y="344" width="28" height="16" rx="4" fill="#E2563C"/>
+          </g>
+
+          <!-- water + power under floor -->
+          <g stroke="#3A1C31" stroke-width="3.5">
+            <rect x="196" y="354" width="92" height="20" rx="9" fill="#CDE8E4"/>
+            <rect x="386" y="354" width="92" height="20" rx="9" fill="#F0B25E"/>
+          </g>
+
+          <!-- wheels -->
+          <g class="cwheel" transform="translate(186,388)">
+            <circle r="34" fill="#2C1726"/><circle r="19" fill="#FFF1E0" stroke="#3A1C31" stroke-width="4"/><circle r="4.5" fill="#3A1C31"/>
+          </g>
+          <g class="cwheel" transform="translate(700,388)">
+            <circle r="34" fill="#2C1726"/><circle r="19" fill="#FFF1E0" stroke="#3A1C31" stroke-width="4"/><circle r="4.5" fill="#3A1C31"/>
+          </g>
+
+          <!-- callout dots -->
+          <g font-family="'Hanken Grotesk',sans-serif" font-weight="700" font-size="13" text-anchor="middle">
+            <g class="dotc"><circle cx="143" cy="232" r="13" fill="#E2563C"/><text x="143" y="236.5" fill="#FFF4E6">1</text></g>
+            <g class="dotc"><circle cx="330" cy="232" r="13" fill="#E2563C"/><text x="330" y="236.5" fill="#FFF4E6">2</text></g>
+            <g class="dotc"><circle cx="477" cy="110" r="13" fill="#E2563C"/><text x="477" y="114.5" fill="#FFF4E6">3</text></g>
+            <g class="dotc"><circle cx="577" cy="178" r="13" fill="#E2563C"/><text x="577" y="182.5" fill="#FFF4E6">4</text></g>
+            <g class="dotc"><circle cx="243" cy="276" r="13" fill="#E2563C"/><text x="243" y="280.5" fill="#FFF4E6">5</text></g>
+            <g class="dotc"><circle cx="288" cy="131" r="13" fill="#E2563C"/><text x="288" y="135.5" fill="#FFF4E6">6</text></g>
+            <g class="dotc"><circle cx="430" cy="364" r="13" fill="#E2563C"/><text x="430" y="368.5" fill="#FFF4E6">7</text></g>
+          </g>
+        </svg>
+      </div>
+
+      <ol class="spec-grid" role="list">
+        <li class="spec" data-reveal><b>Backwash basin</b><p>Full shampoo bowl with on-board hot water. Yes, a real rinse in your driveway.</p></li>
+        <li class="spec" data-reveal><b>Hydraulic chair</b><p>The same chair your favorite salon has, bolted to a van floor with a view of your street.</p></li>
+        <li class="spec" data-reveal><b>Full color bar</b><p>60+ shades of professional color, developers, and bond builders mixed on board.</p></li>
+        <li class="spec" data-reveal><b>Daylight-true station</b><p>Color-balanced lighting around the mirror, so your toner reads the same indoors and out.</p></li>
+        <li class="spec" data-reveal><b>Hot towels, always</b><p>Warm towels, cold drinks, good playlists. The small stuff is the point.</p></li>
+        <li class="spec" data-reveal><b>AC rated for July</b><p>Dual-zone climate built for Phoenix summers. 75&deg;F inside when it&rsquo;s 112&deg;F outside.</p></li>
+      </ol>
+      <p class="travel-note" data-reveal><b>7 &mdash; underneath it all:</b> fresh-water and grey-water tanks plus whisper-quiet battery power. We never run a cord to your house or a hose to your spigot.</p>
+    </div>
+  </section>
+
+  <!-- ================= HOW IT WORKS ================= -->
+  <section class="sec" id="how" data-bg="#E08D72" data-ink="#34182D" aria-labelledby="how-h">
+    <div class="wrap">
+      <div data-reveal>
+        <p class="mile">Mile 03 &mdash; How it works</p>
+        <h2 id="how-h">Three steps. <span class="script">One of them is ours.</span></h2>
+      </div>
+
+      <div class="road-zone" id="roadZone">
+        <span class="steps-mobile-line" aria-hidden="true"></span>
+        <svg id="roadSvg" aria-hidden="true">
+          <path id="roadBase" fill="none" stroke="var(--road)" stroke-width="18" stroke-linecap="round"/>
+          <path id="roadDash" fill="none" stroke="#FFF3E2" stroke-width="3.5" stroke-linecap="round" stroke-dasharray="16 16" opacity=".95"/>
+          <circle id="culdesac" r="0" fill="var(--road)"/>
+          <g id="homePin"></g>
+          <g id="roadVan">
+            <rect x="-30" y="-17" width="60" height="34" rx="12" fill="#FFF6E9" stroke="#34182D" stroke-width="4"/>
+            <rect x="14" y="-13" width="10" height="26" rx="4" fill="#CDE8E4" stroke="#34182D" stroke-width="3"/>
+            <rect x="-16" y="-9" width="20" height="18" rx="5" fill="#F6E3CB" stroke="#34182D" stroke-width="3"/>
+            <line x1="-30" y1="-20" x2="-18" y2="-20" stroke="#34182D" stroke-width="4" stroke-linecap="round"/>
+            <line x1="-30" y1="20" x2="-18" y2="20" stroke="#34182D" stroke-width="4" stroke-linecap="round"/>
+            <circle cx="27" cy="-9" r="3.2" fill="#F0B25E" stroke="#34182D" stroke-width="2"/>
+            <circle cx="27" cy="9" r="3.2" fill="#F0B25E" stroke="#34182D" stroke-width="2"/>
+          </g>
+        </svg>
+
+        <div class="steps">
+          <article class="step" data-reveal>
+            <p class="k">01</p>
+            <h3>Pick your window</h3>
+            <p>Book below or text us. Choose a service, drop your address, pick a two-hour window that fits your day.</p>
+          </article>
+          <article class="step" data-reveal>
+            <p class="k">02</p>
+            <h3>We pull up</h3>
+            <p>The van parks out front and the salon switches on &mdash; water, power, and climate all on board. Setup takes four minutes.</p>
+          </article>
+          <article class="step" data-reveal>
+            <p class="k">03</p>
+            <h3>Walk ten feet home</h3>
+            <p>Cut, color, gossip, blowout. Then step back inside your house with great hair and zero parking lot.</p>
+          </article>
+          <p class="road-cap" data-reveal>every route ends in your driveway</p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ================= WHERE WE ROLL ================= -->
+  <section class="sec" id="where" data-bg="#7A4163" data-ink="#FBEEE0" aria-labelledby="where-h">
+    <div class="wrap where-grid">
+      <div data-reveal>
+        <p class="mile">Mile 04 &mdash; Where we roll</p>
+        <h2 id="where-h">Based in North Phoenix. <span class="script">At home all over the Valley.</span></h2>
+        <p class="lede">The map works backwards here: you stay put, and the salon does the miles.</p>
+        <ul class="areas" role="list">
+          <li>Cave Creek</li><li>Carefree</li><li>North Scottsdale</li><li>Desert Ridge</li>
+          <li>Paradise Valley</li><li>Arcadia</li><li>Old Town Scottsdale</li><li>Arrowhead</li>
+          <li>Biltmore</li><li>Tempe</li><li>Chandler</li><li>Gilbert</li>
+        </ul>
+        <p class="travel-note">Travel is included within 20 miles of our North Phoenix base. Past that, a small mileage fee &mdash; quoted up front, never a surprise.</p>
+      </div>
+
+      <div class="mapwrap" data-reveal>
+        <svg id="valleyMap" viewBox="-300 -300 600 600" role="img" aria-labelledby="mapTitle">
+          <title id="mapTitle">Radial map of the Phoenix Valley with your home at the center</title>
+          <g fill="none" stroke="currentColor" stroke-width="1.6">
+            <circle r="92" stroke-dasharray="3 8" opacity=".5"/>
+            <circle r="172" stroke-dasharray="3 8" opacity=".38"/>
+            <circle r="252" stroke-dasharray="3 8" opacity=".26"/>
+          </g>
+          <g class="ring-label" font-size="11.5" fill="currentColor" opacity=".55" font-weight="700" letter-spacing="2">
+            <text x="98" y="-4">10 MI</text>
+            <text x="178" y="-4">20 MI</text>
+            <text x="258" y="-4">25+</text>
+          </g>
+
+          <!-- route in -->
+          <path id="mapRoute" d="M -286 -184 Q -180 -210 -120 -150 Q -60 -92 -118 -38 Q -176 14 -122 36 Q -96 46 -80 6" fill="none" stroke="#F0B25E" stroke-width="3" stroke-linecap="round"/>
+          <g id="mapVan" transform="translate(-80,6) rotate(-68) scale(.62)">
+            <rect x="-30" y="-17" width="60" height="34" rx="12" fill="#FFF6E9" stroke="#34182D" stroke-width="4"/>
+            <rect x="14" y="-13" width="10" height="26" rx="4" fill="#CDE8E4" stroke="#34182D" stroke-width="3"/>
+            <rect x="-16" y="-9" width="20" height="18" rx="5" fill="#F6E3CB" stroke="#34182D" stroke-width="3"/>
+            <circle cx="27" cy="-9" r="3.2" fill="#F0B25E" stroke="#34182D" stroke-width="2"/>
+            <circle cx="27" cy="9" r="3.2" fill="#F0B25E" stroke="#34182D" stroke-width="2"/>
+          </g>
+
+          <!-- you, at the center -->
+          <g id="homeCenter">
+            <circle r="34" fill="currentColor" opacity=".12"/>
+            <path d="M -13 8 L -13 -4 L 0 -15 L 13 -4 L 13 8 Z" fill="#F0B25E" stroke="currentColor" stroke-width="2.5" stroke-linejoin="round"/>
+            <rect x="-3.5" y="-1" width="7" height="9" fill="currentColor" opacity=".8"/>
+            <text y="30" text-anchor="middle" font-family="'Ms Madi',cursive" font-size="24" fill="currentColor">your place</text>
+          </g>
+
+          <!-- neighborhoods -->
+          <g font-size="13.5" fill="currentColor">
+            <g class="area-pt"><circle cx="-36" cy="-128" r="3.5" fill="#F0B25E"/><text x="-28" y="-124">Desert Ridge</text></g>
+            <g class="area-pt"><circle cx="60" cy="-160" r="3.5" fill="#F0B25E"/><text x="68" y="-156">Cave Creek</text></g>
+            <g class="area-pt"><circle cx="150" cy="-118" r="3.5" fill="#F0B25E"/><text x="158" y="-114">Carefree</text></g>
+            <g class="area-pt"><circle cx="118" cy="-50" r="3.5" fill="#F0B25E"/><text x="126" y="-46">N. Scottsdale</text></g>
+            <g class="area-pt"><circle cx="60" cy="64" r="3.5" fill="#F0B25E"/><text x="68" y="68">Paradise Valley</text></g>
+            <g class="area-pt"><circle cx="-86" cy="98" r="3.5" fill="#F0B25E"/><text x="-78" y="102">Biltmore</text></g>
+            <g class="area-pt"><circle cx="30" cy="150" r="3.5" fill="#F0B25E"/><text x="38" y="154">Arcadia</text></g>
+            <g class="area-pt far-label"><circle cx="-176" cy="-60" r="3.5" fill="#F0B25E"/><text x="-168" y="-56">Arrowhead</text></g>
+            <g class="area-pt far-label"><circle cx="128" cy="208" r="3.5" fill="#F0B25E"/><text x="136" y="212">Tempe</text></g>
+            <g class="area-pt far-label"><circle cx="-30" cy="236" r="3.5" fill="#F0B25E"/><text x="-110" y="240">Chandler</text></g>
+            <g class="area-pt far-label"><circle cx="196" cy="120" r="3.5" fill="#F0B25E"/><text x="204" y="124">Gilbert</text></g>
+          </g>
+        </svg>
+      </div>
+    </div>
+  </section>
+
+  <!-- ================= TESTIMONIALS ================= -->
+  <section class="sec" id="love" data-bg="#45264E" data-ink="#FBEEE0" aria-labelledby="love-h">
+    <div class="wrap">
+      <div data-reveal>
+        <p class="mile">Mile 05 &mdash; Word of mouth</p>
+        <h2 id="love-h">The whole street is <span class="script">talking.</span></h2>
+      </div>
+      <div class="quotes">
+        <figure class="quote" data-reveal>
+          <span class="stars-row" aria-label="5 out of 5 stars">&#9733;&#9733;&#9733;&#9733;&#9733;</span>
+          <span class="open" aria-hidden="true">Obsessed.</span>
+          <blockquote><p>Sweet colored my hair in my own driveway while my kids napped inside. I cried a little. Ten out of ten.</p></blockquote>
+          <footer>Marisol R. &middot; Arcadia</footer>
+        </figure>
+        <figure class="quote" data-reveal>
+          <span class="stars-row" aria-label="5 out of 5 stars">&#9733;&#9733;&#9733;&#9733;&#9733;</span>
+          <span class="open" aria-hidden="true">Spoiled now.</span>
+          <blockquote><p>The van is nicer than my last salon. Cold AC, hot water, a perfect balayage &mdash; and I never left my street.</p></blockquote>
+          <footer>Dana K. &middot; Cave Creek</footer>
+        </figure>
+        <figure class="quote" data-reveal>
+          <span class="stars-row" aria-label="5 out of 5 stars">&#9733;&#9733;&#9733;&#9733;&#9733;</span>
+          <span class="open" aria-hidden="true">For my mom.</span>
+          <blockquote><p>Booked for my mother, who can&rsquo;t drive anymore. They treated her like a queen at her own curb.</p></blockquote>
+          <footer>Priya S. &middot; North Scottsdale</footer>
+        </figure>
+      </div>
+    </div>
+  </section>
+
+  <!-- ================= BOOK ================= -->
+  <section class="sec" id="book" data-bg="#251733" data-ink="#F9ECDC" aria-labelledby="book-h">
+    <div class="wrap book-grid">
+      <div class="book-side" data-reveal>
+        <p class="mile">Last stop &mdash; Your place</p>
+        <h2 id="book-h">Book your <span class="script">house call.</span></h2>
+        <p class="lede">Tell us what you&rsquo;re dreaming up. We text back within the hour, Tue&ndash;Sat, with a window and an exact quote.</p>
+        <div class="contact-alt">
+          <a href="tel:+16025550188"><span class="ico" aria-hidden="true">&#9742;</span><span>Call or text (602) 555-0188</span></a>
+          <a href="mailto:hello@sweetsmobilesalon.com"><span class="ico" aria-hidden="true">@</span><span>hello@sweetsmobilesalon.com</span></a>
+        </div>
+        <p class="hours">Tue&ndash;Sat &middot; 8a&ndash;7p &middot; Early chairs in summer, because Phoenix.</p>
+      </div>
+
+      <div class="form-card" data-reveal>
+        <form id="bookForm" novalidate>
+          <div class="frow">
+            <div class="field"><label for="f-name">Name</label><input id="f-name" name="name" type="text" autocomplete="name" placeholder="Jordan Alvarez" required></div>
+            <div class="field"><label for="f-phone">Phone</label><input id="f-phone" name="phone" type="tel" autocomplete="tel" placeholder="(602) 555-0123" required></div>
+          </div>
+          <div class="frow">
+            <div class="field">
+              <label for="f-service">Service</label>
+              <select id="f-service" name="service">
+                <option>Cut &amp; style</option><option>Color / balayage</option><option>Perm or smoothing</option>
+                <option>Blowout / event hair</option><option>Group booking</option><option>Not sure yet</option>
+              </select>
+            </div>
+            <div class="field"><label for="f-area">Neighborhood</label><input id="f-area" name="area" type="text" placeholder="Cave Creek" required></div>
+          </div>
+          <div class="field"><label for="f-when">When works?</label><input id="f-when" name="when" type="text" placeholder="Sat morning, or any weekday after 4"></div>
+          <button class="btn" type="submit">Request my window</button>
+          <p class="form-fine">No deposit to ask. We confirm by text before anything is booked.</p>
+        </form>
+        <div class="booked" role="status" aria-live="polite">
+          <span style="font-size:2rem" aria-hidden="true">&#10024;</span>
+          <p class="big">Request received.</p>
+          <p>Keep an eye on your texts &mdash; we&rsquo;ll be in touch within the hour, Tue&ndash;Sat, with a window and a quote.</p>
+          <span class="sig">&mdash; Sweet</span>
+        </div>
+      </div>
+    </div>
+  </section>
+</main>
+
+<footer class="footer" data-bg="#251733" data-ink="#F9ECDC">
+  <div class="wrap">
+    <div class="foot-grid">
+      <div class="foot-brand">
+        <span class="brand-script">Sweet&rsquo;s</span>
+        <p>A full-service salon in a beautifully built van, rolling across the Phoenix Valley since 2026.</p>
+      </div>
+      <div>
+        <h4>Visit-ish</h4>
+        <ul>
+          <li>Tue&ndash;Sat &middot; 8a&ndash;7p</li>
+          <li>North Phoenix, AZ</li>
+          <li>We come to you</li>
+        </ul>
+      </div>
+      <div>
+        <h4>Say hi</h4>
+        <ul>
+          <li><a href="tel:+16025550188">(602) 555-0188</a></li>
+          <li><a href="mailto:hello@sweetsmobilesalon.com">hello@sweets&shy;mobilesalon.com</a></li>
+          <li><a href="#" aria-label="Instagram">@sweets.mobile.salon</a></li>
+        </ul>
+      </div>
+      <div>
+        <h4>Shortcuts</h4>
+        <ul>
+          <li><a href="#menu">The menu</a></li>
+          <li><a href="#van">The van</a></li>
+          <li><a href="#book">Book a house call</a></li>
+        </ul>
+      </div>
+    </div>
+    <div class="legal">
+      <span>&copy; 2026 Sweet&rsquo;s Mobile Salon &middot; Phoenix, AZ</span>
+      <span>Licensed AZ cosmetologists &middot; Fully insured &middot; Water-wise &amp; self-contained</span>
+    </div>
+  </div>
+</footer>
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.5/gsap.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.5/ScrollTrigger.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.5/MotionPathPlugin.min.js"></script>
+<script>
+(function(){
+  "use strict";
+  gsap.registerPlugin(ScrollTrigger, MotionPathPlugin);
+
+  var sections = gsap.utils.toArray("[data-bg]");
+  var root = document.documentElement;
+
+  /* ---------- stars (built for everyone; visibility is scrubbed) ---------- */
+  var starWrap = document.getElementById("stars");
+  for (var i = 0; i < 90; i++){
+    var s = document.createElement("span");
+    s.className = "star" + (Math.random() > .82 ? " big" : "");
+    s.style.left = (Math.random()*100).toFixed(2) + "%";
+    s.style.top  = (Math.random()*70).toFixed(2) + "%";
+    s.style.animationDelay = (Math.random()*3).toFixed(2) + "s";
+    starWrap.appendChild(s);
+  }
+
+  /* ---------- marquee content ---------- */
+  var items = ["Precision cuts","Balayage","Gloss & toner","Perms","Blowouts","Keratin","Bridal & event","Kids' cuts","Root touch-ups","Deep conditioning"];
+  var vanSep = '<svg viewBox="0 0 60 34" aria-hidden="true"><rect x="3" y="6" width="46" height="22" rx="8" fill="none" stroke="currentColor" stroke-width="3"/><path d="M49 12 h6 l3 6 v6 h-9z" fill="none" stroke="currentColor" stroke-width="3" stroke-linejoin="round"/><circle cx="16" cy="29" r="4.5" fill="currentColor"/><circle cx="46" cy="29" r="4.5" fill="currentColor"/></svg>';
+  var track = document.getElementById("marqTrack");
+  var half = items.map(function(t){ return "<span>" + t + "</span>" + vanSep; }).join("");
+  track.innerHTML = half + '<span class="marq-dup" aria-hidden="true" style="display:contents">' + half + "</span>";
+
+  /* ---------- booking form (front-end demo) ---------- */
+  var form = document.getElementById("bookForm");
+  form.addEventListener("submit", function(e){
+    e.preventDefault();
+    if (!form.reportValidity()) return;
+    form.closest(".form-card").classList.add("is-done");
+  });
+
+  /* ---------- sunset stops, read from the DOM ---------- */
+  var stops = sections.map(function(sec){
+    return { el: sec, bg: sec.dataset.bg, ink: sec.dataset.ink };
+  });
+  function paintStatic(){
+    // reduced-motion: each section owns its own sky
+    stops.forEach(function(st){
+      st.el.style.setProperty("--bg", st.bg);
+      st.el.style.setProperty("--ink", st.ink);
+      st.el.style.background = "var(--bg)";
+      st.el.style.color = "var(--ink)";
+    });
+    document.body.style.background = stops[0].bg;
+    var sun = document.getElementById("sun");
+    sun.style.top = "12%";
+    starWrap.style.opacity = .9;
+  }
+
+  /* ---------- the winding road through "how it works" ---------- */
+  var roadST = [];
+  function buildRoad(){
+    if (window.innerWidth < 760) return;
+    var zone = document.getElementById("roadZone");
+    var svg  = document.getElementById("roadSvg");
+    var W = zone.clientWidth, H = zone.clientHeight;
+    svg.setAttribute("viewBox", "0 0 " + W + " " + H);
+    var cx = W / 2;
+    var amp = Math.min(110, W * 0.085);
+    var cards = zone.querySelectorAll(".step");
+    var zTop = zone.getBoundingClientRect().top;
+    var pts = [{x: cx, y: 6}];
+    cards.forEach(function(c, idx){
+      var r = c.getBoundingClientRect();
+      pts.push({ x: cx + (idx % 2 === 0 ? -amp : amp), y: (r.top - zTop) + r.height/2 });
+    });
+    var lastY = pts[pts.length-1].y;
+    var cdsR = 46;
+    var cdsY = Math.min(H - cdsR - 24, lastY + 190);
+    pts.push({x: cx, y: cdsY - cdsR - 60});
+
+    // catmull-rom -> cubic bezier
+    var d = "M " + pts[0].x + " " + pts[0].y;
+    for (var i = 0; i < pts.length - 1; i++){
+      var p0 = pts[Math.max(0, i-1)], p1 = pts[i], p2 = pts[i+1], p3 = pts[Math.min(pts.length-1, i+2)];
+      d += " C " + (p1.x+(p2.x-p0.x)/6) + " " + (p1.y+(p2.y-p0.y)/6) + ", "
+                 + (p2.x-(p3.x-p1.x)/6) + " " + (p2.y-(p3.y-p1.y)/6) + ", " + p2.x + " " + p2.y;
+    }
+    // straight approach, then a lap of the cul-de-sac, then park in the middle
+    d += " L " + cx + " " + (cdsY - cdsR);
+    d += " a " + cdsR + " " + cdsR + " 0 1 1 -0.1 0";
+    d += " l 0 " + cdsR;
+
+    document.getElementById("roadBase").setAttribute("d", d);
+    document.getElementById("roadDash").setAttribute("d", d);
+    var cds = document.getElementById("culdesac");
+    cds.setAttribute("cx", cx); cds.setAttribute("cy", cdsY); cds.setAttribute("r", cdsR + 14);
+
+    var pin = document.getElementById("homePin");
+    pin.setAttribute("transform", "translate(" + cx + "," + cdsY + ")");
+    pin.innerHTML =
+      '<path d="M -15 10 L -15 -5 L 0 -18 L 15 -5 L 15 10 Z" fill="#F0B25E" stroke="#34182D" stroke-width="3" stroke-linejoin="round"/>' +
+      '<rect x="-4" y="0" width="8" height="10" fill="#34182D"/>';
+    return true;
+  }
+
+  function initRoadMotion(){
+    roadST.forEach(function(st){ st.kill(); });
+    roadST = [];
+    if (!buildRoad()) { return; }
+    var tween = gsap.to("#roadVan", {
+      motionPath: { path: "#roadBase", align: "#roadBase", alignOrigin: [0.5, 0.5], autoRotate: true },
+      ease: "none",
+      scrollTrigger: {
+        trigger: "#roadZone",
+        start: "top 62%",
+        end: "bottom 78%",
+        scrub: 0.6
+      }
+    });
+    roadST.push(tween.scrollTrigger);
+  }
+
+  /* ====================================================
+     MOTION (skipped entirely under prefers-reduced-motion)
+     ==================================================== */
+  var mm = gsap.matchMedia();
+
+  mm.add("(prefers-reduced-motion: reduce)", function(){
+    paintStatic();
+    document.getElementById("roadVan").style.display = "none";
+    buildRoad();
+  });
+
+  mm.add("(prefers-reduced-motion: no-preference)", function(){
+
+    /* --- 1. golden hour: scrub --bg / --ink between section stops --- */
+    gsap.set(root, {"--bg": stops[0].bg, "--ink": stops[0].ink});
+    stops.forEach(function(st, i){
+      if (i === 0) return;
+      gsap.fromTo(root,
+        {"--bg": stops[i-1].bg, "--ink": stops[i-1].ink},
+        {"--bg": st.bg, "--ink": st.ink, ease: "none", immediateRender: false,
+         scrollTrigger: { trigger: st.el, start: "top 86%", end: "top 32%", scrub: 0.4 }});
+    });
+
+    /* --- 2. the sun sets across the first two-thirds of the trip --- */
+    gsap.fromTo("#sun", {top: "15%", left: "64%"}, {
+      top: "118%", left: "13%", scale: 1.45, ease: "none",
+      scrollTrigger: { start: 0, end: function(){ return ScrollTrigger.maxScroll(window) * 0.62; }, scrub: 0.4 }
+    });
+    gsap.fromTo("#sun", {"--sunA": "#FFE9B8", "--sunB": "#F6B14E"}, {
+      "--sunA": "#FFC98F", "--sunB": "#E25B3C", ease: "none", immediateRender: false,
+      scrollTrigger: { start: 0, end: function(){ return ScrollTrigger.maxScroll(window) * 0.5; }, scrub: 0.4 }
+    });
+
+    /* --- 3. stars rise at dusk --- */
+    gsap.fromTo("#stars", {opacity: 0}, {
+      opacity: 1, ease: "none",
+      scrollTrigger: { trigger: "#where", start: "top 60%", endTrigger: "#book", end: "top 40%", scrub: 0.5 }
+    });
+
+    /* --- 4. hero: the van drives in and parks --- */
+    var wheels = gsap.utils.toArray("#heroVan .wheel");
+    gsap.set("#heroVan", {x: -Math.min(window.innerWidth * 1.1, 1300)});
+    gsap.set("#awnCanopy", {scaleY: 0.04, transformOrigin: "50% 0%"});
+    gsap.set(".hl-inner", {yPercent: 110});
+    gsap.set("[data-hero-fade]", {opacity: 0, y: 18});
+    gsap.set([".ridge", ".horizon use"], {opacity: 0, y: 26});
+
+    var intro = gsap.timeline({defaults: {ease: "power3.out"}});
+    intro
+      .to([".ridge", ".horizon use"], {opacity: 1, y: 0, duration: 0.9, stagger: 0.06}, 0)
+      .to("#heroVan", {x: 0, duration: 1.7, ease: "power2.out"}, 0.15)
+      .to(wheels, {rotation: 620, duration: 1.7, ease: "power2.out", transformOrigin: "50% 50%"}, 0.15)
+      .fromTo("#speedlines", {opacity: 0.8, x: 40}, {opacity: 0, x: -60, duration: 1.5, ease: "power2.out"}, 0.2)
+      .to("#heroVan", {scaleY: 0.965, transformOrigin: "50% 100%", duration: 0.1, yoyo: true, repeat: 1}, 1.78)
+      .to(".hl-inner", {yPercent: 0, duration: 1, stagger: 0.12}, 0.5)
+      .to("[data-hero-fade]", {opacity: 1, y: 0, duration: 0.8, stagger: 0.1}, 0.9)
+      .to("#awnCanopy", {scaleY: 1, duration: 0.7, ease: "back.out(2.2)"}, 2.0)
+      .to("#doorGlow", {opacity: 0.4, duration: 0.6}, 2.2);
+
+    /* --- 5. marquee drift --- */
+    gsap.to("#marqTrack", {xPercent: -50, ease: "none", duration: 30, repeat: -1});
+
+    /* --- 6. section reveals --- */
+    gsap.set("[data-reveal]", {opacity: 0, y: 30});
+    ScrollTrigger.batch("[data-reveal]", {
+      start: "top 86%",
+      once: true,
+      onEnter: function(els){
+        gsap.to(els, {opacity: 1, y: 0, duration: 0.85, ease: "power3.out", stagger: 0.09});
+      }
+    });
+
+    /* --- 7. callout dots pulse once visible --- */
+    gsap.from(".dotc", {
+      scale: 0, transformOrigin: "50% 50%", ease: "back.out(2.4)",
+      stagger: 0.09, duration: 0.5,
+      scrollTrigger: {trigger: ".cutaway-frame", start: "top 72%"}
+    });
+
+    /* --- 8. map route draws itself --- */
+    var route = document.getElementById("mapRoute");
+    var rl = route.getTotalLength();
+    gsap.fromTo(route, {strokeDasharray: rl, strokeDashoffset: rl}, {
+      strokeDashoffset: 0, duration: 1.6, ease: "power2.inOut",
+      scrollTrigger: {trigger: "#valleyMap", start: "top 75%"}
+    });
+    gsap.from(".area-pt", {
+      opacity: 0, scale: 0.6, transformOrigin: "50% 50%", stagger: 0.06, duration: 0.5, ease: "back.out(2)",
+      scrollTrigger: {trigger: "#valleyMap", start: "top 70%"}
+    });
+
+    /* --- 9. the winding road + scrubbed van --- */
+    initRoadMotion();
+
+    var rT;
+    window.addEventListener("resize", function(){
+      clearTimeout(rT);
+      rT = setTimeout(function(){ initRoadMotion(); ScrollTrigger.refresh(); }, 220);
+    });
+
+    return function(){ roadST.forEach(function(st){ st.kill(); }); };
+  });
+
+  /* keep ScrollTrigger honest after webfonts settle */
+  if (document.fonts && document.fonts.ready){
+    document.fonts.ready.then(function(){
+      if (window.innerWidth >= 760 && !window.matchMedia("(prefers-reduced-motion: reduce)").matches) initRoadMotion();
+      ScrollTrigger.refresh();
+    });
+  }
+  window.addEventListener("load", function(){ ScrollTrigger.refresh(); });
+})();
+</script>
+</body>
+</html>
